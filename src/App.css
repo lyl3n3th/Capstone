@@ -1,3 +1,4 @@
+/*AdmissionHome css*/
 *{
   margin: 0;
   padding: 0;
@@ -126,5 +127,149 @@
   top: 66.3%;
 }
 
+/*Admission1 css*/
 
+.container {
+  height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: white;
+  padding-top: 50px;
+}
 
+.container1 {
+  max-width: 800px;
+  width: 100%;
+}
+
+.container1 .steps {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+.steps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 0 20px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.steps .step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.steps .step p {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.steps .circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  width: 60px;
+  color: white;
+  font-size: 20px;
+  font-weight: 500;
+  border-radius: 50%;
+  background: #0018FC;
+  border: 4px solid #e0e0e0;
+}
+
+.steps .progress-bar {
+  position: absolute;
+  height: 4px;
+  width: calc(100% - 100px);
+  top: 35px;
+  left: 35px;
+  background: #e0e0e0;
+  z-index: 1;
+}
+
+.progress-bar .indicator {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: #0018FC;
+  
+}
+
+.progress-bar {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 4px;
+  background: #e0e0e0;
+  z-index: 1;
+}
+
+.ttle {
+  max-width: 700px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.header {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.header p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #333;
+  opacity: 0.7;
+  text-align: center;
+}
+
+.mcontainer { 
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 20px;
+  position: absolute;
+  margin-top: 10%;
+}
+
+.header {
+  position: relative;
+  background: white;
+  width: 100%;
+  max-width: 800px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 1px 2px rgb(0, 0, 0, 0.2);
+  border: 1px solid #e0e0e0;
+  height: 650px;
+}
