@@ -40,8 +40,64 @@ function AdmissionInfo() {
         <div className="header1">
           <div className="syb">
             Personal Information
-            <p>Provide your personal information</p>
+            <p>Please fill in all the required fields.</p>
           </div>
+
+          <form action="" className="pinfo">
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="fname">First Name</label>
+                <input type="text" id="fname" name="fname" required />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="lname">Last Name</label>
+                <input type="text" id="lname" name="lname" required />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="mname">Middle Name</label>
+                <input type="text" id="mname" name="mname" required />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="birthday">Birthday</label>
+                <input
+                  type="text"
+                  id="birthday"
+                  name="birthday"
+                  placeholder="MM/DD/YYYY"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="sex">Sex</label>
+                <input type="text" id="sex" name="sex" required />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="suffix">Suffix</label>
+                <input type="text" id="suffix" name="suffix" />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="address">Address</label>
+                <input
+                  className="address-input"
+                  type="text"
+                  id="address"
+                  name="address"
+                  placeholder="Street Address, City, Province, ZIP Code"
+                  required
+                />
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
