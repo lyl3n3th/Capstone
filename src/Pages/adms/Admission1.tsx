@@ -29,6 +29,11 @@ function Admission1() {
             <span className="circle">4</span>
             <p>Confirmation</p>
           </div>
+
+          <div className="step">
+            <span className="circle">5</span>
+            <p>Entrance Exam</p>
+          </div>
         </div>
       </div>
 
@@ -76,7 +81,12 @@ function Admission1() {
             >
               Cancel
             </button>
-            <button className="btn2">Continue</button>
+            <button
+              className="btn2"
+              onClick={() => (window.location.href = "/information")}
+            >
+              Continue
+            </button>
           </div>
         </div>
       </div>

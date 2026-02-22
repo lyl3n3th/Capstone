@@ -348,10 +348,10 @@
 }
 
 .choices .campus {
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
   margin: 0;
-  left: 23px;
+  left: 18px;
 }
 
 .choices:hover {
@@ -368,4 +368,48 @@
   background: #0116ce;
   box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
 }
+
+/*AdmissionInfo css*/
+
+.mcontainer1 { 
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 20px;
+  position: absolute;
+  margin-top: 10%;
+}
+
+.header1 {
+  position: relative;
+  background: white;
+  width: 100%;
+  max-width: 1020px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 1px 2px rgb(0, 0, 0, 0.2);
+  border: 1px solid #e0e0e0;
+  height: 700px;
+  bottom: 70px;
+}
+
+.header1 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.header1 p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 12px;
+  color: #333;
+  opacity: 0.7;
+  text-align: center;
+}
+
+
+
 
