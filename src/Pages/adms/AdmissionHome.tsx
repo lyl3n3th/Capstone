@@ -14,7 +14,14 @@ function AdmissionHome() {
         <p>Go Beyond Learning</p>
         <p id="p2">ADMISSION PORTAL</p>
 
-        <a href="#">Enroll Now</a>
+        <a
+          href="/enroll"
+          onClick={() => {
+            window.location.href = "/enroll";
+          }}
+        >
+          Enroll Now
+        </a>
         <img src={logow} alt="logo" className="logo"></img>
 
         <div className="form-container">

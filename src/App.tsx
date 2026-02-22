@@ -10,7 +10,7 @@ function App() {
           <Route index element={<AdmissionHome />} />
           <Route path="/Admission" element={<AdmissionHome />} />
           <Route index element={<Admission1 />} />
-          <Route path="/AdmissionPage1" element={<Admission1 />} />
+          <Route path="/enroll" element={<Admission1 />} />
         </Routes>
       </BrowserRouter>
     </div>

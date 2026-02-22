@@ -124,7 +124,7 @@
   position: absolute;
   right: 35%;
   margin: 20px 0;
-  top: 66.3%;
+  top: 67.5%;
 }
 
 /*Admission1 css*/
@@ -271,5 +271,101 @@
   border-radius: 15px;
   box-shadow: 0 1px 2px rgb(0, 0, 0, 0.2);
   border: 1px solid #e0e0e0;
-  height: 650px;
+  height: 700px;
+  bottom: 70px;
 }
+
+.choices {
+  display: flex;
+  margin-top: 30px;
+  top: 40px;
+  position: relative;
+  align-items: center;
+  background: white;
+  border: 1px solid #e0e0e0;
+  padding: 16px;
+  border-radius: 15px;
+  width: 100%;
+  height: 90px;
+  box-shadow: 0 1px 2px rgb(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.choices2 {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 100px;
+}
+
+.btn1 {
+  background: white;
+  padding: 12px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 500px;
+}
+
+.btn2 {
+  background: #0018FC;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  width: 500px;
+}
+
+.choices .circle1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  color: white;
+  font-size: 20px;
+  font-weight: 500;
+  border-radius: 50%;
+  background: #e0e0e0;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.choices .location-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.choices .location {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.choices .campus {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  left: 23px;
+}
+
+.choices:hover {
+  border-color: #0018FC;
+  box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
+}
+
+.btn1:hover {
+  border-color: #333;
+  box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
+}
+
+.btn2:hover {
+  background: #0116ce;
+  box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
+}
+
