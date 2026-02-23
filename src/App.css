@@ -389,7 +389,7 @@
   border-radius: 15px;
   box-shadow: 0 1px 2px rgb(0, 0, 0, 0.2);
   border: 1px solid #e0e0e0;
-  height: 900px;
+  height: 1000px;
   bottom: 70px;
 }
 
@@ -466,8 +466,15 @@
 .dropdown {
   position: relative;
   width: 100%;
-  max-width: 357px;
+  max-width: 450px;
   margin-top: 3px;
+  flex: 1;
+}
+
+.dropdown-row .dropdown{
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
 }
 
 .dropdown *{
@@ -517,14 +524,14 @@
 
 .menu {
   position: absolute;
-  width: 35%;
-  top: 82%;
-  left: 6%;
+  width: 100%;
+  top: 100%;
+  left: 0;
   right: 0;
   background: white;
   border: 1px solid #e0e0e0;
   border-radius: 0.5em;
-  margin-top: 0.5em;
+  margin-top: 0.2em;
   padding: 0%;
   list-style-type: none;
   opacity: 0;
@@ -553,7 +560,37 @@
 .select-clicked{
   border-color: #333;
   box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
+}
 
+.btn3 {
+  background: white;
+  padding: 12px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn3:hover {
+  border-color: #333;
+  box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
+}
+
+.btn4 {
+  background: #0018FC;
+  padding: 12px 20px;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.btn4:hover {
+  background: #0116ce;
+  box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
 }
 
 

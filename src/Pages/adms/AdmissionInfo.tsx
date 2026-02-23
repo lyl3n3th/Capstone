@@ -8,6 +8,13 @@ function AdmissionInfo() {
   const [program, setProgram] = useState("Program");
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  //seond dropdown menu
+
+  const [menuOpen1, setIsMenuOpen1] = useState(false);
+  const [program1, setProgram1] = useState("Strand/Course");
+  const wrapperRef1 = useRef<HTMLDivElement>(null);
+
+  //close dropdown menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -15,6 +22,24 @@ function AdmissionInfo() {
         !wrapperRef.current.contains(event.target as Node)
       ) {
         setIsMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  //close second dropdown menu when clicking outside
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        wrapperRef1.current &&
+        !wrapperRef1.current.contains(event.target as Node)
+      ) {
+        setIsMenuOpen1(false);
       }
     }
 
@@ -165,7 +190,7 @@ function AdmissionInfo() {
               </div>
             </div>
 
-            <div className="form-row">
+            <div className="form-row dropdown-row">
               <div className="dropdown" ref={wrapperRef}>
                 <label>Program selection</label>
 
@@ -178,25 +203,130 @@ function AdmissionInfo() {
                     className={`cart ${menuOpen ? "cart-rotate" : ""}`}
                   ></div>
                 </div>
+
+                <ul className={`menu ${menuOpen ? "show" : ""}`}>
+                  <li
+                    onClick={() => {
+                      setProgram("College");
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    College
+                  </li>
+                  <li
+                    onClick={() => {
+                      setProgram("Senior High School");
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    Senior High School
+                  </li>
+                </ul>
               </div>
-              <ul className={`menu ${menuOpen ? "show" : ""}`}>
-                <li
-                  onClick={() => {
-                    setProgram("College");
-                    setIsMenuOpen(false);
-                  }}
+
+              <div className="dropdown" ref={wrapperRef1}>
+                <label>Strand/Course selection</label>
+
+                <div
+                  className="select"
+                  onClick={() => setIsMenuOpen1((p) => !p)}
                 >
-                  College
-                </li>
-                <li
-                  onClick={() => {
-                    setProgram("Senior High School");
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  Senior High School
-                </li>
-              </ul>
+                  <span className="selected">{program1}</span>
+                  <div
+                    className={`cart ${menuOpen1 ? "cart-rotate" : ""}`}
+                  ></div>
+                </div>
+
+                <ul className={`menu ${menuOpen1 ? "show" : ""}`}>
+                  <li
+                    onClick={() => {
+                      setProgram1("STEM");
+                      setIsMenuOpen1(false);
+                    }}
+                  >
+                    STEM - Science, Technology, Engineering, and Mathematics
+                  </li>
+                  <li
+                    onClick={() => {
+                      setProgram1("ABM");
+                      setIsMenuOpen1(false);
+                    }}
+                  >
+                    ABM - Accountancy, Business, and Management
+                  </li>
+                  <li
+                    onClick={() => {
+                      setProgram1("HUMSS");
+                      setIsMenuOpen1(false);
+                    }}
+                  >
+                    HUMSS - Humanities and Social Sciences
+                  </li>
+                  <li
+                    onClick={() => {
+                      setProgram1("GAS");
+                      setIsMenuOpen1(false);
+                    }}
+                  >
+                    GAS - General Academic Strand
+                  </li>
+                  <li
+                    onClick={() => {
+                      setProgram1("ICT");
+                      setIsMenuOpen1(false);
+                    }}
+                  >
+                    ICT - Information and Communications Technology
+                  </li>
+                  <li
+                    onClick={() => {
+                      setProgram1("HE");
+                      setIsMenuOpen1(false);
+                    }}
+                  >
+                    HE - Home Economics
+                  </li>
+                  <li
+                    onClick={() => {
+                      setProgram1("BSIT");
+                      setIsMenuOpen1(false);
+                    }}
+                  >
+                    BSIT - Bachelor of Science in Information Technology
+                  </li>
+                  <li
+                    onClick={() => {
+                      setProgram1("BSCS");
+                      setIsMenuOpen1(false);
+                    }}
+                  >
+                    BSCS - Bachelor of Science in Computer Science
+                  </li>
+                  <li
+                    onClick={() => {
+                      setProgram1("BSHM");
+                      setIsMenuOpen1(false);
+                    }}
+                  >
+                    BSHM - Bachelor of Science in Hospitality Management
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="choices2">
+              <button
+                className="btn3"
+                onClick={() => (window.location.href = "/enroll")}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn4"
+                onClick={() => (window.location.href = "/information")}
+              >
+                Continue
+              </button>
             </div>
           </form>
         </div>
