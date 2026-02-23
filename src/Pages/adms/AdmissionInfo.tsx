@@ -1,6 +1,31 @@
+import { useEffect, useState } from "react";
+import { useRef } from "react";
 import "../../App.css";
 
 function AdmissionInfo() {
+  //dropdown menu
+  const [menuOpen, setIsMenuOpen] = useState(false);
+  const [program, setProgram] = useState("Program");
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  //end of dropdown menu
+
   return (
     <div className="container">
       <div className="container1">
@@ -60,7 +85,6 @@ function AdmissionInfo() {
                 <input type="text" id="mname" name="mname" required />
               </div>
             </div>
-
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="birthday">Birthday</label>
@@ -83,7 +107,6 @@ function AdmissionInfo() {
                 <input type="text" id="suffix" name="suffix" />
               </div>
             </div>
-
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="address">Address</label>
@@ -96,6 +119,84 @@ function AdmissionInfo() {
                   required
                 />
               </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                  type="text"
+                  id="email"
+                  name="email"
+                  placeholder="example@email.com"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="contact">Contact</label>
+                <input
+                  type="text"
+                  id="contact"
+                  name="contact"
+                  placeholder="(63+)"
+                  required
+                />
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="lastSchool">Last School Attended</label>
+                <input type="text" id="lastSchool" name="lastSchool" required />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="yearCompletion">Year Completion</label>
+                <input
+                  type="text"
+                  id="yearCompletion"
+                  name="yearCompletion"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="lrn">LRN (Learner Reference Number)</label>
+                <input type="text" id="lrn" name="lrn" required />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="dropdown" ref={wrapperRef}>
+                <label>Program selection</label>
+
+                <div
+                  className="select"
+                  onClick={() => setIsMenuOpen((p) => !p)}
+                >
+                  <span className="selected">{program}</span>
+                  <div
+                    className={`cart ${menuOpen ? "cart-rotate" : ""}`}
+                  ></div>
+                </div>
+              </div>
+              <ul className={`menu ${menuOpen ? "show" : ""}`}>
+                <li
+                  onClick={() => {
+                    setProgram("College");
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  College
+                </li>
+                <li
+                  onClick={() => {
+                    setProgram("Senior High School");
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Senior High School
+                </li>
+              </ul>
             </div>
           </form>
         </div>
