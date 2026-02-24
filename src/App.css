@@ -593,4 +593,247 @@
   box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
 }
 
+/*AdmissionReq css*/
 
+.header2 {
+  position: relative;
+  background: white;
+  width: 100%;
+  max-width: 800px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 1px 2px rgb(0, 0, 0, 0.2);
+  border: 1px solid #e0e0e0;
+  height: 950px;
+  bottom: 70px;
+}
+
+.header2 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.header2 p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 12px;
+  color: #333;
+  opacity: 0.7;
+  text-align: center;
+}
+
+.upload-form {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.upload-row {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 30px;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.upload-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.upload-group label:first-child {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: left;
+  width: 100%;
+  padding: 3px;
+}
+
+
+.file-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 350px;
+  height: 180px;
+  border: 2px dashed #e0e0e0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  background: #fafafa;
+}
+
+.file-wrapper:hover {
+  border-color: #333;
+  background: #f0f5ff;
+}
+
+.upload-text {
+  position: absolute;
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+  margin-bottom: 10px;
+  top: 120px;
+  padding: 0 10px;
+  font-weight: lighter
+}
+
+.file-wrapper .file-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-wrapper .cont-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #e0e0e0;
+  border-radius: 10px;
+  width: 50px;
+  height: 50px;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.file-wrapper:hover .cont-icon {
+  background: #333;
+}
+
+.cont-icon .icon {
+  color: white;
+  font-size: 28px;
+}
+
+.file-input {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+
+.file-input:focus {
+  outline: none;
+}
+
+.choices-note {
+  display: flex;
+  margin-top: 10px;
+  
+}
+
+.choices-note .note {
+  font-size: 12px;
+  color: hsl(234, 100%, 70%);
+  opacity: 100%;
+  text-align: left;
+  margin-top: 16px;
+}
+
+.choices-note {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1em;
+  top: 5px;
+  position: relative;
+  align-items: flex-start;
+  background: hsl(234, 100%, 95%);
+  border: 1px solid hsl(234, 100%, 80%);
+  padding: 20px;
+  border-radius: 15px;
+  width: 100%;
+  gap: 10px;
+}
+
+.choices-note .exclamation-icon {
+  color: hsl(234, 100%, 75%);
+  font-size: 20px;
+  opacity: 0.8;
+  flex-shrink: 0;
+  position: relative;
+}
+
+
+.choices-note .note {
+  font-size: 14px;
+  color: hsl(234, 100%, 70%);
+  margin: 0;
+  padding: 0;
+  font-weight: lighter
+}
+
+.choices-note .notice-text {
+  font-size: 13px;
+  color: hsl(234, 100%, 75%);
+  text-align: left;
+  margin: 0;
+  padding-left: 10px;
+  position: relative;
+  font-weight: lighter;
+}
+
+.choices-note .notice-text::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: hsl(234, 100%, 70%);
+}
+
+.note-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn5 {
+  background: white;
+  padding: 12px 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  bottom: 50px;
+  position: relative;
+}
+
+.btn5:hover {
+  border-color: #333;
+  box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
+}
+
+.btn6 {
+  background: #0018FC;
+  padding: 12px 20px;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+  bottom: 50px;
+}
+
+.btn6:hover {
+  background: #0116ce;
+  box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
+}

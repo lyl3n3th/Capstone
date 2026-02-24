@@ -3,16 +3,40 @@ import { useRef } from "react";
 import "../../App.css";
 
 function AdmissionInfo() {
-  //dropdown menu
+  // dropdown menu
   const [menuOpen, setIsMenuOpen] = useState(false);
   const [program, setProgram] = useState("Program");
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  //seond dropdown menu
+  // second dropdown menu
 
   const [menuOpen1, setIsMenuOpen1] = useState(false);
   const [program1, setProgram1] = useState("Strand/Course");
   const wrapperRef1 = useRef<HTMLDivElement>(null);
+
+  // available options
+  const programOptions = ["College", "Senior High School"];
+
+  const strandOptions: Record<string, string[]> = {
+    College: [
+      "BSIT - Bachelor of Science in Information Technology",
+      "BSCS - Bachelor of Science in Computer Science",
+      "BSHM - Bachelor of Science in Hospitality Management",
+    ],
+    "Senior High School": [
+      "STEM - Science, Technology, Engineering, and Mathematics",
+      "ABM - Accountancy, Business, and Management",
+      "HUMSS - Humanities and Social Sciences",
+      "GAS - General Academic Strand",
+      "ICT - Information and Communications Technology",
+      "HE - Home Economics",
+    ],
+  };
+
+  // reset the second dropdown if the program selection changes
+  useEffect(() => {
+    setProgram1("Strand/Course");
+  }, [program]);
 
   //close dropdown menu when clicking outside
   useEffect(() => {
@@ -205,22 +229,17 @@ function AdmissionInfo() {
                 </div>
 
                 <ul className={`menu ${menuOpen ? "show" : ""}`}>
-                  <li
-                    onClick={() => {
-                      setProgram("College");
-                      setIsMenuOpen(false);
-                    }}
-                  >
-                    College
-                  </li>
-                  <li
-                    onClick={() => {
-                      setProgram("Senior High School");
-                      setIsMenuOpen(false);
-                    }}
-                  >
-                    Senior High School
-                  </li>
+                  {programOptions.map((opt) => (
+                    <li
+                      key={opt}
+                      onClick={() => {
+                        setProgram(opt);
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      {opt}
+                    </li>
+                  ))}
                 </ul>
               </div>
 
@@ -238,78 +257,17 @@ function AdmissionInfo() {
                 </div>
 
                 <ul className={`menu ${menuOpen1 ? "show" : ""}`}>
-                  <li
-                    onClick={() => {
-                      setProgram1("STEM");
-                      setIsMenuOpen1(false);
-                    }}
-                  >
-                    STEM - Science, Technology, Engineering, and Mathematics
-                  </li>
-                  <li
-                    onClick={() => {
-                      setProgram1("ABM");
-                      setIsMenuOpen1(false);
-                    }}
-                  >
-                    ABM - Accountancy, Business, and Management
-                  </li>
-                  <li
-                    onClick={() => {
-                      setProgram1("HUMSS");
-                      setIsMenuOpen1(false);
-                    }}
-                  >
-                    HUMSS - Humanities and Social Sciences
-                  </li>
-                  <li
-                    onClick={() => {
-                      setProgram1("GAS");
-                      setIsMenuOpen1(false);
-                    }}
-                  >
-                    GAS - General Academic Strand
-                  </li>
-                  <li
-                    onClick={() => {
-                      setProgram1("ICT");
-                      setIsMenuOpen1(false);
-                    }}
-                  >
-                    ICT - Information and Communications Technology
-                  </li>
-                  <li
-                    onClick={() => {
-                      setProgram1("HE");
-                      setIsMenuOpen1(false);
-                    }}
-                  >
-                    HE - Home Economics
-                  </li>
-                  <li
-                    onClick={() => {
-                      setProgram1("BSIT");
-                      setIsMenuOpen1(false);
-                    }}
-                  >
-                    BSIT - Bachelor of Science in Information Technology
-                  </li>
-                  <li
-                    onClick={() => {
-                      setProgram1("BSCS");
-                      setIsMenuOpen1(false);
-                    }}
-                  >
-                    BSCS - Bachelor of Science in Computer Science
-                  </li>
-                  <li
-                    onClick={() => {
-                      setProgram1("BSHM");
-                      setIsMenuOpen1(false);
-                    }}
-                  >
-                    BSHM - Bachelor of Science in Hospitality Management
-                  </li>
+                  {(strandOptions[program] || []).map((opt) => (
+                    <li
+                      key={opt}
+                      onClick={() => {
+                        setProgram1(opt);
+                        setIsMenuOpen1(false);
+                      }}
+                    >
+                      {opt}
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -323,7 +281,7 @@ function AdmissionInfo() {
               </button>
               <button
                 className="btn4"
-                onClick={() => (window.location.href = "/information")}
+                onClick={() => (window.location.href = "/requirements")}
               >
                 Continue
               </button>
