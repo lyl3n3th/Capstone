@@ -105,6 +105,11 @@ function AdmissionInfo() {
                 <label htmlFor="mname">Middle Name</label>
                 <input type="text" id="mname" name="mname" required />
               </div>
+
+              <div className="form-group">
+                <label htmlFor="suffix">Suffix</label>
+                <input type="text" id="suffix" name="suffix" />
+              </div>
             </div>
             <div className="form-row">
               <div className="form-group">
@@ -119,13 +124,13 @@ function AdmissionInfo() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="sex">Sex</label>
-                <input type="text" id="sex" name="sex" required />
+                <label htmlFor="pofb">Place of Birth</label>
+                <input type="text" id="pofb" name="pofb" />
               </div>
 
               <div className="form-group">
-                <label htmlFor="suffix">Suffix</label>
-                <input type="text" id="suffix" name="suffix" />
+                <label htmlFor="sex">Sex</label>
+                <input type="text" id="sex" name="sex" required />
               </div>
             </div>
             <div className="form-row">
