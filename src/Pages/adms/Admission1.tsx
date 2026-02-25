@@ -1,40 +1,15 @@
 import "../../App.css";
+import { useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
+import Progress from "../../components/Progress";
 
 function Admission1() {
+  const [selected, setSelected] = useState<string>("");
+
   return (
     <div className="container">
       <div className="container1">
-        <div className="steps">
-          <div className="progress-bar">
-            <span className="indicator"></span>
-          </div>
-
-          <div className="step">
-            <span className="circle">1</span>
-            <p>Branches</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">2</span>
-            <p>Information</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">3</span>
-            <p>Requirements</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">4</span>
-            <p>Confirmation</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">5</span>
-            <p>Entrance Exam</p>
-          </div>
-        </div>
+        <Progress current={1} />
       </div>
 
       <div className="mcontainer">
@@ -44,7 +19,13 @@ function Admission1() {
             <p>Choose the campus you wish to enroll in</p>
           </div>
 
-          <div className="choices">
+          <div
+            className={`choices ${selected === "Taytay" ? "selected" : ""}`}
+            onClick={() => setSelected("Taytay")}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === "Enter" && setSelected("Taytay")}
+          >
             <span className="circle1">
               <FaLocationDot />
             </span>
@@ -54,7 +35,13 @@ function Admission1() {
             </div>
           </div>
 
-          <div className="choices">
+          <div
+            className={`choices ${selected === "Bacoor" ? "selected" : ""}`}
+            onClick={() => setSelected("Bacoor")}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === "Enter" && setSelected("Bacoor")}
+          >
             <span className="circle1">
               <FaLocationDot />
             </span>
@@ -64,7 +51,13 @@ function Admission1() {
             </div>
           </div>
 
-          <div className="choices">
+          <div
+            className={`choices ${selected === "GMA" ? "selected" : ""}`}
+            onClick={() => setSelected("GMA")}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === "Enter" && setSelected("GMA")}
+          >
             <span className="circle1">
               <FaLocationDot />
             </span>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import "../../App.css";
+import Progress from "../../components/Progress";
 
 function AdmissionInfo() {
   // dropdown menu
@@ -78,36 +79,7 @@ function AdmissionInfo() {
   return (
     <div className="container">
       <div className="container1">
-        <div className="steps">
-          <div className="progress-bar">
-            <span className="indicator"></span>
-          </div>
-
-          <div className="step">
-            <span className="circle">1</span>
-            <p>Branches</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">2</span>
-            <p>Information</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">3</span>
-            <p>Requirements</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">4</span>
-            <p>Confirmation</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">5</span>
-            <p>Entrance Exam</p>
-          </div>
-        </div>
+        <Progress current={2} />
       </div>
 
       <div className="mcontainer1">

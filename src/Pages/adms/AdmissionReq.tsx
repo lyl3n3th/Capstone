@@ -1,41 +1,13 @@
 import { MdOutlineDriveFolderUpload } from "react-icons/md";
 import { FaCircleExclamation } from "react-icons/fa6";
 import "../../App.css";
+import Progress from "../../components/Progress";
 
 function AdmissionReq() {
   return (
     <div className="container">
       <div className="container1">
-        <div className="steps">
-          <div className="progress-bar">
-            <span className="indicator"></span>
-          </div>
-
-          <div className="step">
-            <span className="circle">1</span>
-            <p>Branches</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">2</span>
-            <p>Information</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">3</span>
-            <p>Requirements</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">4</span>
-            <p>Confirmation</p>
-          </div>
-
-          <div className="step">
-            <span className="circle">5</span>
-            <p>Entrance Exam</p>
-          </div>
-        </div>
+        <Progress current={3} />
       </div>
 
       <div className="mcontainer">
@@ -148,13 +120,13 @@ function AdmissionReq() {
             <div className="choices2">
               <button
                 className="btn5"
-                onClick={() => (window.location.href = "/enroll")}
+                onClick={() => (window.location.href = "/information")}
               >
                 Cancel
               </button>
               <button
                 className="btn6"
-                onClick={() => (window.location.href = "/requirements")}
+                onClick={() => (window.location.href = "/confirmation")}
               >
                 Continue
               </button>
