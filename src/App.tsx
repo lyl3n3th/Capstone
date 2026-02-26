@@ -4,6 +4,7 @@ import Admission1 from "./Pages/adms/Admission1.tsx";
 import AdmissionInfo from "./Pages/adms/AdmissionInfo.tsx";
 import AdmissionReq from "./Pages/adms/AdmissionReq.tsx";
 import AdmissionConf from "./Pages/adms/AdmissionConf.tsx";
+import AdmissionEnt from "./Pages/adms/AdmissionEnt.tsx";
 
 function App() {
   return (
@@ -20,6 +21,8 @@ function App() {
           <Route path="/requirements" element={<AdmissionReq />} />
           <Route index element={<AdmissionConf />} />
           <Route path="/confirmation" element={<AdmissionConf />} />
+          <Route index element={<AdmissionEnt />} />
+          <Route path="/EntranceExam" element={<AdmissionEnt />} />
         </Routes>
       </BrowserRouter>
     </div>

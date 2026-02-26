@@ -278,12 +278,12 @@
   background: white;
   width: 100%;
   max-width: 800px;
-  padding: 30px;
+  padding: 40px 36px 60px;
   border-radius: 15px;
-  box-shadow: 0 1px 2px rgb(0, 0, 0, 0.2);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
   border: 1px solid #e0e0e0;
-  height: 700px;
-  bottom: 70px;
+  height: auto;
+  bottom: 60px;
 }
 
 .choices {
@@ -646,6 +646,148 @@
   color: #333;
   opacity: 0.7;
   text-align: center;
+}
+
+/* AdmissionEnt: exam card styles */
+.exam-card {
+  text-align: left;
+}
+
+.header3 {
+  position: relative;
+  background: white;
+  width: 100%;
+  max-width: 800px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 1px 2px rgb(0, 0, 0, 0.2);
+  border: 1px solid #e0e0e0;
+  height: 690px;
+  bottom: 70px;
+}
+
+.header3 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.header3 p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 12px;
+  color: #333;
+  opacity: 0.7;
+  text-align: center;
+}
+
+
+.exam-title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 800;
+  margin: 6px 0 18px;
+}
+
+.divider {
+  border: 1px solid #333;
+  height: 1px;
+  background: #e6e6e6;
+  margin-bottom: 18px;
+  
+}
+
+.exam-heading {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #222;
+  margin-left: 10px;
+}
+
+.exam-details {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 640px;
+  margin: 1px auto 2px;
+  margin-left: 10px;
+}
+
+.exam-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.exam-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #0018FC;
+  color: #fff;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.exam-text {
+  color: #333;
+  font-size: 15px;
+}
+
+.exam-text strong { 
+  font-weight: 700; 
+  margin-right: 6px; 
+}
+
+.add-calendar {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 22px 0 14px;
+}
+
+.add-calendar .btn6 {
+  top: 3px;
+  width: 220px;
+  padding: 12px 22px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.info-box {
+  max-width: 720px;
+  margin: 16px auto 10px;
+  background: rgba(120, 102, 255, 0.16);
+  border-radius: 8px;
+  padding: 18px 22px;
+  color: #1b1736;
+}
+
+
+
+.back-wrapper {
+  margin-top: 3em;
+  display: flex;
+  justify-content: center;
+}
+
+.back-wrapper .btn6 { width: 180px; padding: 12px 18px; }
+
+@media (max-width: 860px) {
+  .header {
+    padding: 22px;
+  }
+  .exam-card { padding: 20px; }
+  .add-calendar .btn6 { width: 100%; }
 }
 
 .upload-form {

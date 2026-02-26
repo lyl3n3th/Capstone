@@ -63,7 +63,7 @@ function AdmissionConf() {
             </button>
             <button
               className="btn6"
-              onClick={() => (window.location.href = "/requirements")}
+              onClick={() => (window.location.href = "/EntranceExam")}
             >
               Continue
             </button>

@@ -31,7 +31,7 @@ function Admission1() {
             </span>
             <div className="location-text">
               <p className="location">Taytay</p>
-              <p className="campus">Taytay campus</p>
+              <p className="campus">Taytay branch</p>
             </div>
           </div>
 
@@ -47,7 +47,7 @@ function Admission1() {
             </span>
             <div className="location-text">
               <p className="location">Bacoor</p>
-              <p className="campus">Bacoor campus</p>
+              <p className="campus">Bacoor branch</p>
             </div>
           </div>
 
@@ -63,7 +63,7 @@ function Admission1() {
             </span>
             <div className="location-text">
               <p className="location">GMA</p>
-              <p className="campus">GMA campus</p>
+              <p className="campus">GMA branch</p>
             </div>
           </div>
 
