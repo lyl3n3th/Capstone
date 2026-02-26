@@ -111,6 +111,7 @@ function AdmissionInfo() {
                 <input type="text" id="suffix" name="suffix" />
               </div>
             </div>
+
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="birthday">Birthday</label>
@@ -133,6 +134,24 @@ function AdmissionInfo() {
                 <input type="text" id="sex" name="sex" required />
               </div>
             </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="religion">Religion</label>
+                <input type="text" id="religion" name="religion" required />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="civil-st">Civil Status</label>
+                <input type="text" id="cst" name="cst" />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="cts">Citizenship</label>
+                <input type="text" id="cts" name="cts" required />
+              </div>
+            </div>
+
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="address">Address</label>
@@ -249,7 +268,7 @@ function AdmissionInfo() {
               </div>
             </div>
 
-            <div className="choices2">
+            <div className="choices3">
               <button
                 className="btn3"
                 onClick={() => (window.location.href = "/enroll")}

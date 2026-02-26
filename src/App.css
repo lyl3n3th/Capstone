@@ -310,6 +310,14 @@
   margin-top: 100px;
 }
 
+.choices3 {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  top: 30px;
+}
+
 .btn1 {
   background: white;
   padding: 12px 20px;
@@ -559,12 +567,14 @@
   list-style-type: none;
   opacity: 0;
   transition: opacity 0.2s ease;
+
+  display: none;
   z-index: 100;
 }
 
 .menu li {
   list-style: none;
-  padding: 12px;
+  padding: 8px;
   cursor: pointer;
   font-size: 14px;
   font-weight: normal;
