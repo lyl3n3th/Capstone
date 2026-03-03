@@ -75,8 +75,13 @@ function Admission1() {
               Cancel
             </button>
             <button
-              className="btn2"
-              onClick={() => (window.location.href = "/information")}
+              className={`btn2 ${!selected ? "disabled" : ""}`}
+              onClick={() => {
+                if (selected) {
+                  window.location.href = `/information?branch=${selected}`;
+                }
+              }}
+              disabled={!selected}
             >
               Continue
             </button>

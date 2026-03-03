@@ -1,0 +1,517 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.login-page {
+  min-height: 100vh;
+  width: 100%;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.login-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  margin-top: 1px;
+}
+
+@media (min-width: 768px) {
+  .login-wrapper {
+    flex-direction: row;
+  }
+}
+
+.swiper-side {
+  flex: 1;
+  min-height: 500px;
+  position: relative;
+  overflow: hidden;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .swiper-side {
+    flex: 0 0 70%;
+    display: block;
+  }
+  .login-card {
+    flex: 0 0 60%;
+  }
+}
+
+.custom-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  pointer-events: none;
+}
+
+.slide.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.slide-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.45), transparent 60%);
+  pointer-events: none;
+}
+
+/* Navigation arrows */
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  font-size: 2.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.3s;
+}
+
+.nav-arrow:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.prev {
+  left: 15px;
+}
+
+.next {
+  right: 15px;
+}
+
+/* Dots (pagination) */
+.dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.dot.active {
+  background: white;
+  transform: scale(1.3);
+}
+.login-card {
+  flex: 1;
+  background: white;
+  padding: 2.5rem 2rem;
+}
+
+@media (min-width: 768px) {
+  .login-card {
+    padding: 3.5rem 3rem;
+  }
+}
+
+.header-text {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  margin-top: 1.5rem;
+}
+
+.header-text p {
+  position: relative;
+  margin-top: 0.5rem;
+  color: #666;
+  font-size: 0.95rem;
+  top: 1.5rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.form-groups label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #444;
+}
+
+.form-groups input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.form-groups input:focus {
+  outline: none;
+  border-color: #1A3D5C;
+  box-shadow: 0 0 0 3px rgba(26, 61, 92, 0.12);
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #1A3D5C;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.toggle-password:hover {
+  color: #066287;
+}
+
+/* Rest of your styles remain mostly the same */
+.forgot-link-wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.forgot-link {
+  font-size: 0.875rem;
+  color: #066287;
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  color: #0a7ab3;
+  text-decoration: underline;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 0.95rem;
+  background: linear-gradient(to right, #1A3D5C, #066287);
+  color: white;
+  font-weight: 500;
+  font-size: 1.05rem;
+  border: none;
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.submit-btn:hover {
+  background: linear-gradient(to right, #20639e, #0a7ab3);
+}
+
+.register-prompt {
+  margin-top: 2rem;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.register-link {
+  color: #066287;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.register-link:hover {
+  color: #0a7ab3;
+  text-decoration: underline;
+}
+
+.selected-branch-display {
+  min-height: 1.4em;
+  font-size: 0.875rem;
+  color: #333;
+  font-weight: 400;
+}
+
+
+.selected-branch-display strong {
+  color: #1A3D5C;
+  font-weight: 600;
+}
+
+/* Style for unselected / placeholder state */
+.selected-branch-display .placeholder {
+  color: white;                 
+  font-weight: 400;                   
+}
+
+.dropdownlog {
+  position: relative;
+  width: 100%;
+  max-width: 450px;
+  margin-top: 3px;
+  flex: 1;
+}
+
+
+.dropdownlog *{
+  box-sizing: border-box;
+}
+
+.selectlog {
+  background: white;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5em;
+  padding: 12px 16px;
+  cursor: pointer;
+  height: 50px;
+  transition: none;
+}
+
+.cart{
+  border-top: 0.3em solid rgb(8, 8, 8);
+  border-left: 0.3em solid transparent;
+  border-right: 0.3em solid transparent;
+  width: 0;
+  height: 0;
+  opacity: 0.7;
+}
+
+.cart-rotate{
+  transform: rotate(180deg);
+}
+
+.selectedlog {
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.dropdownlog .lbel{
+  display: block;
+  width: 100%;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.menulog {
+  position: absolute;
+  width: 100%;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5em;
+  padding: 0%;
+  list-style-type: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  display: none;
+  z-index: 999;
+
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+
+/* */
+.menulog li {
+  list-style: none;
+  padding: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.menulog li:hover{
+  background: #f0f0f0;
+  border-radius: 0.5em;
+}
+
+.menulog.show{
+  display: block;
+  opacity: 1;
+}
+
+.select-clicked{
+  border-color: #333;
+  box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
+}
+
+.divider {
+    border: 0.2px #666;
+    height: 1px;
+    background: #e6e6e6;
+    margin-bottom: 2px;
+}
+
+.logo-1 {
+  right: 28.5em;
+  top: 9em;
+  position: absolute;
+  height: 50px;
+  width: 150px;
+}
+
+.reg-wrapper {
+  max-width: 900px;
+  margin: 1.5rem auto;
+}
+
+.reg-header {
+  text-align: center;
+  padding: 1.2rem 0 0.8rem;
+}
+
+.reg-logo-centered {
+  height: 70px;
+  width: auto;
+  display: block;
+  margin: 0 auto 0.8rem;
+}
+
+.reg-main-title {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #1A3D5C;
+  margin: 0.3rem 0 1rem;
+}
+
+.reg-form {
+  padding: 0.8rem 1.5rem 1.5rem;
+  gap: 1.2rem;
+}
+
+.reg-branch-section {
+  margin-bottom: 1.2rem;
+}
+
+.reg-dropdown {
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.reg-grid-container {
+  display: flex;
+  gap: 2.2rem;
+  flex-wrap: wrap;
+}
+
+.reg-grid-column {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.reg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.reg-field label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.reg-field input {
+  border-radius: 0.75rem;
+  padding: 0.7rem 1rem;
+  font-size: 14px;
+  border: 1px solid #e0e0e0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.reg-field input:focus {
+  outline: none;
+  border-color: #1A3D5C;
+  box-shadow: 0 0 0 3px rgba(26, 61, 92, 0.12);
+}
+
+.reg-hint {
+  font-size: 0.82rem;
+  color: #666;
+  margin-top: 0.35rem;
+}
+
+.reg-divider {
+  height: 1px;
+  background: #e6e6e6;
+  margin: 1rem 0 0.55rem;
+}
+.reg-submit {
+  margin: 1.5rem auto 0;
+  width: 100%;
+  max-width: 360px;
+  display: block;
+}
+
+/* Mobile – stack columns */
+@media (max-width: 768px) {
+  .reg-grid-container {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .reg-wrapper {
+    max-width: 520px;
+  }
+
+  .reg-branch-section {
+    max-width: 100%;
+  }
+}
+
+.reg-logo {
+  position: absolute;
+  top: 5rem;
+  left: 55rem;
+
+}

@@ -3,6 +3,12 @@ import { useRef } from "react";
 import "../../App.css";
 import Progress from "../../components/Progress";
 
+// Helper: get query param
+function getQueryParam(name: string): string | null {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
 function AdmissionInfo() {
   // Program dropdown menu
   const [menuOpen, setIsMenuOpen] = useState(false);
@@ -64,6 +70,13 @@ function AdmissionInfo() {
     "Vietnamese",
   ];
 
+  const selectedBranch = getQueryParam("branch") || ""; // "Taytay", "Bacoor", "GMA"
+
+  const availablePrograms =
+    selectedBranch.toLowerCase() === "bacoor"
+      ? ["College", "Senior High School"]
+      : ["Senior High School"]; // Taytay & GMA only SHS
+
   const strandOptions: Record<string, string[]> = {
     College: [
       "BSIT - Bachelor of Science in Information Technology",
@@ -79,6 +92,13 @@ function AdmissionInfo() {
       "HE - Home Economics",
     ],
   };
+  //reset if non-bacoor
+  useEffect(() => {
+    if (program === "College" && selectedBranch.toLowerCase() !== "bacoor") {
+      setProgram("Program");
+      alert("College programs are only available at Bacoor branch.");
+    }
+  }, [program, selectedBranch]);
 
   // reset the second dropdown if the program selection changes
   useEffect(() => {
@@ -202,6 +222,14 @@ function AdmissionInfo() {
         <div className="header1">
           <div className="syb">
             Personal Information
+            <p>
+              Campus selected:{" "}
+              <strong style={{ margin: "4px", color: "#0116ce" }}>
+                {" "}
+                {selectedBranch || "—"}
+              </strong>
+              <br />
+            </p>
             <p>Please fill in all the required fields.</p>
           </div>
 
@@ -425,11 +453,10 @@ function AdmissionInfo() {
                 </div>
 
                 <ul className={`menu ${menuOpen ? "show" : ""}`}>
-                  {programOptions.map((opt) => (
+                  {availablePrograms.map((opt) => (
                     <li
                       key={opt}
                       onClick={() => {
-                        console.log("Program: ", opt);
                         setProgram(opt);
                         setIsMenuOpen(false);
                       }}
@@ -441,7 +468,7 @@ function AdmissionInfo() {
               </div>
 
               <div className="dropdown" ref={wrapperRef1}>
-                <label>Strand/Course selection</label>
+                <label>Strand / Course selection</label>
 
                 <div
                   className="select"
@@ -458,7 +485,6 @@ function AdmissionInfo() {
                     <li
                       key={opt}
                       onClick={() => {
-                        console.log("Selected Strand: ", opt);
                         setProgram1(opt);
                         setIsMenuOpen1(false);
                       }}
