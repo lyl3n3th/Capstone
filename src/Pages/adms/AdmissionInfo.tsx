@@ -3,7 +3,7 @@ import { useRef } from "react";
 import "../../App.css";
 import Progress from "../../components/Progress";
 
-// Helper: get query param
+// get qeury
 function getQueryParam(name: string): string | null {
   const params = new URLSearchParams(window.location.search);
   return params.get(name);
@@ -224,7 +224,7 @@ function AdmissionInfo() {
             Personal Information
             <p>
               Campus selected:{" "}
-              <strong style={{ margin: "4px", color: "#0116ce" }}>
+              <strong style={{ margin: "4px", color: "#1A3D5C" }}>
                 {" "}
                 {selectedBranch || "—"}
               </strong>

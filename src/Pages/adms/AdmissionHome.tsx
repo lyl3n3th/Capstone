@@ -35,6 +35,7 @@ function AdmissionHome() {
         <div className="track-container">
           <a href="#" className="track-cont">
             <FaRegPaperPlane />
+            <span>Track Progress</span>
           </a>
         </div>
       </div>

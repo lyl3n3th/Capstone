@@ -3,7 +3,6 @@ import slidelog from "../../assets/images/slidelog.jpg";
 import slidelog2 from "../../assets/images/slidelog2.jpg";
 import slidelog3 from "../../assets/images/slidelog3.jpg";
 import bg from "../../assets/images/bg.jpg";
-import logow from "../../assets/images/logow.png";
 import aicslogst from "../../assets/images/aicslogst-2.png";
 import "../../Stud.css";
 
@@ -16,14 +15,7 @@ function LoginReg() {
   const [showPassword, setShowPassword] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Your images – use public/ folder paths as before
-  const slides = [
-    bg,
-    slidelog,
-    slidelog2,
-    slidelog3,
-    // Add more if you want
-  ];
+  const slides = [bg, slidelog, slidelog2, slidelog3];
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -33,7 +25,6 @@ function LoginReg() {
       ) {
         setIsMenuOpenBranch(false);
       }
-      // same for civil status ref if you have it
     }
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -42,16 +33,15 @@ function LoginReg() {
 
   // Auto-slide logic
   useEffect(() => {
-    if (slides.length <= 1) return; // no need if only 1 image
+    if (slides.length <= 1) return;
 
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 4500); // change every 4.5 seconds
+    }, 4500);
 
-    return () => clearInterval(interval); // cleanup
+    return () => clearInterval(interval);
   }, [slides.length]);
 
-  // Manual navigation
   const goToPrevious = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
@@ -67,10 +57,8 @@ function LoginReg() {
   return (
     <div className="login-page">
       <div className="login-wrapper">
-        {/* Left side - Custom Image Slider */}
         <div className="swiper-side">
           <div className="custom-slider">
-            {/* Slides */}
             {slides.map((src, index) => (
               <div
                 key={index}
@@ -79,10 +67,8 @@ function LoginReg() {
               />
             ))}
 
-            {/* Optional overlay (for better contrast if needed) */}
             <div className="slide-overlay" />
 
-            {/* Navigation arrows */}
             <button className="nav-arrow prev" onClick={goToPrevious}>
               ❮
             </button>
@@ -90,7 +76,6 @@ function LoginReg() {
               ❯
             </button>
 
-            {/* Dots (pagination) */}
             <div className="dots">
               {slides.map((_, index) => (
                 <span

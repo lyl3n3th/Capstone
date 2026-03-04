@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-
-import logow from "../../assets/images/logow.png";
 import aicslogst from "../../assets/images/aicslogst-2.png";
 import "../../Stud.css";
 
@@ -64,7 +62,6 @@ function Reglog() {
               className="login-form reg-form"
               onSubmit={(e) => e.preventDefault()}
             >
-              {/* Branch Selector – centered */}
               <div className="reg-branch-section">
                 <div
                   className="dropdownlog reg-dropdown"
@@ -145,7 +142,6 @@ function Reglog() {
                   </div>
                 </div>
 
-                {/* Column 2 */}
                 <div className="reg-grid-column">
                   <div className="reg-field">
                     <label htmlFor="birthDate">Date of Birth</label>

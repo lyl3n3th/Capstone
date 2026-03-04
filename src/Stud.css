@@ -106,7 +106,6 @@
   right: 15px;
 }
 
-/* Dots (pagination) */
 .dots {
   position: absolute;
   bottom: 20px;
@@ -211,7 +210,6 @@
   color: #066287;
 }
 
-/* Rest of your styles remain mostly the same */
 .forgot-link-wrapper {
   display: flex;
   justify-content: flex-end;
@@ -276,7 +274,7 @@
   font-weight: 600;
 }
 
-/* Style for unselected / placeholder state */
+/* */
 .selected-branch-display .placeholder {
   color: white;                 
   font-weight: 400;                   
