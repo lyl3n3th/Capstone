@@ -16,7 +16,7 @@ function Admission1() {
         <div className="header">
           <div className="syb">
             Select Your Branch
-            <p>Choose the campus you wish to enroll in</p>
+            <p>Choose the branch you wish to enroll in</p>
           </div>
 
           <div

@@ -10,7 +10,7 @@ function AdmissionReq() {
         <Progress current={3} />
       </div>
 
-      <div className="mcontainer">
+      <div className="mcontainer mcnt">
         <div className="header2">
           <div className="syb">
             Upload Requirements
@@ -39,7 +39,9 @@ function AdmissionReq() {
               </div>
 
               <div className="upload-group">
-                <label htmlFor="gradeCard">Grade Report Card</label>
+                <label htmlFor="gradeCard" className="grc">
+                  Grade Report Card
+                </label>
                 <label className="file-wrapper">
                   <span className="upload-text">
                     Click to upload grade report card
@@ -60,7 +62,7 @@ function AdmissionReq() {
 
             <div className="upload-row">
               <div className="upload-group">
-                <label htmlFor="form137" className="label-1">
+                <label htmlFor="form137" className="label-2">
                   Birth Certificate/PSA
                 </label>
                 <label className="file-wrapper">
@@ -105,6 +107,7 @@ function AdmissionReq() {
                 <FaCircleExclamation className="exclamation-icon" />
                 <p className="note">Important Notes:</p>
               </div>
+
               <p className="notice-text">
                 All Documents must be clear and readable
               </p>
