@@ -27,6 +27,9 @@
   margin-top: 1px;
 }
 
+
+
+
 @media (min-width: 768px) {
   .login-wrapper {
     flex-direction: row;
@@ -387,13 +390,18 @@
     margin-bottom: 2px;
 }
 
+.logo-header {
+  display: flex;
+  justify-content: center; /* or flex-start / center */
+  align-items: center;
+}
+
 .logo-1 {
-  right: 28.5em;
-  top: 9em;
-  position: absolute;
   height: 50px;
   width: 150px;
 }
+
+/* reg css*/
 
 .reg-wrapper {
   max-width: 900px;
@@ -405,12 +413,7 @@
   padding: 1.2rem 0 0.8rem;
 }
 
-.reg-logo-centered {
-  height: 70px;
-  width: auto;
-  display: block;
-  margin: 0 auto 0.8rem;
-}
+
 
 .reg-main-title {
   font-size: 1.9rem;
@@ -491,25 +494,112 @@
   display: block;
 }
 
-/* Mobile – stack columns */
-@media (max-width: 768px) {
-  .reg-grid-container {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+.reg-logo {
+  position: absolute;
+  top: 5.5rem;
+  left: 55rem;
+  height: 50px;
+}
 
-  .reg-wrapper {
-    max-width: 520px;
-  }
-
-  .reg-branch-section {
-    max-width: 100%;
+@media (max-width: 1440px) {
+  .reg-logo {
+   left: 40rem;
   }
 }
 
-.reg-logo {
-  position: absolute;
-  top: 5rem;
-  left: 55rem;
+
+/* Medium screens (1024px–1439px) */
+@media (max-width: 1439px) and (min-width: 1024px) {
+  .reg-logo {
+    left: 50%;
+    transform: translateX(-50%);
+    height: 50px;
+  }
+}
+
+/* Tablets (768px–1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .reg-logo {
+    position: static;
+    display: block;
+    margin: 0 auto 1rem;
+    height: 50px;
+  }
+}
+
+/* Mobile (below 768px) */
+@media (max-width: 767px) {
+
+  .reg-form {
+    padding: 10px;
+  }
+  
+  .reg-logo {
+    position: static;
+    display: block;
+    margin: 0 auto 1rem;
+    height: 50px;
+  }
+}
+@media (max-width: 360px) {
+  .reg-wrapper {
+    max-width: 100%;
+    margin: 0.5rem;
+    padding: 0rem;
+  }
+
+  .reg-form {
+    padding: 5px;
+  }
+
+  .reg-logo {
+    position: static;       /* remove absolute positioning */
+    display: block;
+    margin: 0 auto 0.50rem; /* center above title */
+    height: 45px;           /* smaller logo */
+    width: auto;
+  }
+
+  .reg-main-title {
+    font-size: 1.2rem;      /* shrink heading */
+    text-align: center;
+  }
+
+  .reg-branch-display {
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .reg-grid-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .reg-grid-column {
+    min-width: 100%;        /* full width per column */
+  }
+
+  .reg-field input {
+    font-size: 0.85rem;     /* smaller input text */
+    padding: 0.6rem 0.8rem; /* tighter padding */
+  }
+
+  .reg-dropdown {
+    max-width: 100%;        /* dropdown fits screen */
+  }
+
+  .reg-submit {
+    max-width: 100%;        /* button spans full width */
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+
+  .reg-hint {
+    font-size: 0.75rem;     /* shrink hint text */
+  }
+
+  .reg-card {
+    padding: 10px;
+  }
 
 }

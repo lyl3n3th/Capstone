@@ -90,9 +90,10 @@ function LoginReg() {
 
         <div className="login-card">
           <div className="login-content">
+            <div className="logo-header">
+              <img src={aicslogst} className="logo-1" alt="Logo" />
+            </div>
             <div className="header-text">
-              <img src={aicslogst} alt="logo-aics" className="logo-1" />
-
               <p className="pent">Enter your credentials to continue</p>
 
               <p className="selected-branch-display">
