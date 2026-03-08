@@ -60,7 +60,67 @@ function Reglog() {
 
             <form
               className="login-form reg-form"
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={async (e) => {
+                e.preventDefault();
+
+                if (!selectedBranch) {
+                  alert("Please select a branch before registering!");
+                  return;
+                }
+
+                if (formData.mobile.length < 11) {
+                  alert("Invalid Mobile number input.");
+                  return;
+                }
+
+                if (formData.password.length < 8) {
+                  alert("Password must be at least 8 characters long.");
+                  setFormData((prev) => ({
+                    ...prev,
+                    password: "",
+                    confirmPassword: "",
+                  }));
+                  return;
+                }
+
+                if (formData.password !== formData.confirmPassword) {
+                  alert("Passwords do not match.");
+                  setFormData((prev) => ({
+                    ...prev,
+                    password: "",
+                    confirmPassword: "",
+                  }));
+                  return;
+                }
+
+                const response = await fetch(
+                  "http://127.0.0.1:8000/api/admissions/register/",
+                  {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      ...formData,
+                      branch: selectedBranch,
+                    }),
+                  },
+                );
+
+                const result = await response.json();
+                console.log(result);
+                alert(result.message);
+
+                if (response.ok) {
+                  setFormData({
+                    studentNumber: "",
+                    email: "",
+                    mobile: "",
+                    birthDate: "",
+                    password: "",
+                    confirmPassword: "",
+                  });
+                  setSelectedBranch("");
+                }
+              }}
             >
               <div className="reg-branch-section">
                 <div
@@ -135,10 +195,10 @@ function Reglog() {
                       value={formData.mobile}
                       onChange={handleChange}
                       placeholder=""
-                      maxLength={11}
+                      maxLength={12}
                       required
                     />
-                    <small className="reg-hint">(63+) 09XX - XXX - XXX</small>
+                    <small className="reg-hint">(63+) 91234567890</small>
                   </div>
                 </div>
 
