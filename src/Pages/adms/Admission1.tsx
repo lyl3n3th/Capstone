@@ -72,11 +72,12 @@ function Admission1() {
           </div>
 
           <div
-            className={`choices ${selected === "Taytay" ? "selected" : ""}`}
-            onClick={() => setSelected("Taytay")}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && setSelected("Taytay")}
+            className={`choices ${selected === "Taytay" ? "selected" : ""} ${
+              status === "Senior High Graduate" ? "disabled-branch" : ""
+            }`}
+            onClick={() =>
+              status !== "Senior High Graduate" && setSelected("Taytay")
+            }
           >
             <span className="circle1">
               <FaLocationDot />
@@ -90,9 +91,6 @@ function Admission1() {
           <div
             className={`choices ${selected === "Bacoor" ? "selected" : ""}`}
             onClick={() => setSelected("Bacoor")}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && setSelected("Bacoor")}
           >
             <span className="circle1">
               <FaLocationDot />
@@ -104,11 +102,12 @@ function Admission1() {
           </div>
 
           <div
-            className={`choices ${selected === "GMA" ? "selected" : ""}`}
-            onClick={() => setSelected("GMA")}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === "Enter" && setSelected("GMA")}
+            className={`choices ${selected === "GMA" ? "selected" : ""} ${
+              status === "Senior High Graduate" ? "disabled-branch" : ""
+            }`}
+            onClick={() =>
+              status !== "Senior High Graduate" && setSelected("GMA")
+            }
           >
             <span className="circle1">
               <FaLocationDot />
@@ -127,13 +126,13 @@ function Admission1() {
               Cancel
             </button>
             <button
-              className={`btn2 ${!selected ? "disabled" : ""}`}
+              className={`btn2 ${!selected || status === "Select Status" ? "disabled" : ""}`}
               onClick={() => {
-                if (selected) {
-                  window.location.href = `/information?branch=${selected}`;
+                if (selected && status !== "Select Status") {
+                  window.location.href = `/information?branch=${selected}&status=${status}`;
                 }
               }}
-              disabled={!selected}
+              disabled={!selected || status === "Select Status"}
             >
               Continue
             </button>

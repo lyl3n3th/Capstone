@@ -176,6 +176,12 @@
 
 }
 
+.disabled-branch {
+  opacity: 0.4;
+  pointer-events: none; 
+  cursor: not-allowed;
+}
+
 
 
 @media (max-width: 720px) {

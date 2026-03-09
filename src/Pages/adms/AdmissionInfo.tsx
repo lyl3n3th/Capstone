@@ -70,12 +70,28 @@ function AdmissionInfo() {
     "Vietnamese",
   ];
 
-  const selectedBranch = getQueryParam("branch") || ""; // "Taytay", "Bacoor", "GMA"
+  const selectedBranch = getQueryParam("branch") || "";
+  //values from admission1
+  const studentStatus = getQueryParam("status") || "";
 
-  const availablePrograms =
-    selectedBranch.toLowerCase() === "bacoor"
-      ? ["College", "Senior High School"]
-      : ["Senior High School"]; // Taytay & GMA only SHS
+  let availablePrograms: string[] = [];
+
+  if (studentStatus === "Junior High Completer") {
+    availablePrograms = ["Senior High School"];
+  } else if (studentStatus === "Senior High Graduate") {
+    availablePrograms =
+      selectedBranch.toLowerCase() === "bacoor" ? ["College"] : [];
+  } else if (studentStatus === "Transferee") {
+    availablePrograms =
+      selectedBranch.toLowerCase() === "bacoor"
+        ? ["College", "Senior High School"]
+        : ["Senior High School"];
+  } else {
+    availablePrograms =
+      selectedBranch.toLowerCase() === "bacoor"
+        ? ["College", "Senior High School"]
+        : ["Senior High School"];
+  }
 
   const strandOptions: Record<string, string[]> = {
     College: [
@@ -92,6 +108,7 @@ function AdmissionInfo() {
       "HE - Home Economics",
     ],
   };
+
   //reset if non-bacoor
   useEffect(() => {
     if (program === "College" && selectedBranch.toLowerCase() !== "bacoor") {
@@ -441,7 +458,6 @@ function AdmissionInfo() {
             <div className="form-row dropdown-row">
               <div className="dropdown" ref={wrapperRef}>
                 <label>Program selection</label>
-
                 <div
                   className="select"
                   onClick={() => setIsMenuOpen((p) => !p)}
@@ -451,25 +467,29 @@ function AdmissionInfo() {
                     className={`cart ${menuOpen ? "cart-rotate" : ""}`}
                   ></div>
                 </div>
-
                 <ul className={`menu ${menuOpen ? "show" : ""}`}>
-                  {availablePrograms.map((opt) => (
-                    <li
-                      key={opt}
-                      onClick={() => {
-                        setProgram(opt);
-                        setIsMenuOpen(false);
-                      }}
-                    >
-                      {opt}
+                  {availablePrograms.length > 0 ? (
+                    availablePrograms.map((opt) => (
+                      <li
+                        key={opt}
+                        onClick={() => {
+                          setProgram(opt);
+                          setIsMenuOpen(false);
+                        }}
+                      >
+                        {opt}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="disabled">
+                      No programs available for this branch/status
                     </li>
-                  ))}
+                  )}
                 </ul>
               </div>
 
               <div className="dropdown" ref={wrapperRef1}>
                 <label>Strand / Course selection</label>
-
                 <div
                   className="select"
                   onClick={() => setIsMenuOpen1((p) => !p)}
@@ -479,7 +499,6 @@ function AdmissionInfo() {
                     className={`cart ${menuOpen1 ? "cart-rotate" : ""}`}
                   ></div>
                 </div>
-
                 <ul className={`menu ${menuOpen1 ? "show" : ""}`}>
                   {(strandOptions[program] || []).map((opt) => (
                     <li

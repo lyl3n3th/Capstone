@@ -84,7 +84,7 @@ function LoginReg() {
 
     if (response.ok) {
       console.log("Logged in student:", result);
-      // later: store student info in localStorage or context
+
       setLoginData({
         branch: "",
         studentNumber: "",
