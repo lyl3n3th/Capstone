@@ -518,13 +518,17 @@ function AdmissionInfo() {
             <div className="choices3">
               <button
                 className="btn3"
-                onClick={() => (window.location.href = "/enroll")}
+                onClick={() =>
+                  (window.location.href = `/enroll?branch=${selectedBranch}&status=${studentStatus}`)
+                }
               >
                 Cancel
               </button>
               <button
                 className="btn4"
-                onClick={() => (window.location.href = "/requirements")}
+                onClick={() => {
+                  window.location.href = `/requirements?branch=${selectedBranch}&status=${studentStatus}`;
+                }}
               >
                 Continue
               </button>

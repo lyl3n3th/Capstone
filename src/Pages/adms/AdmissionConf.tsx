@@ -3,7 +3,17 @@ import { FaCopy } from "react-icons/fa";
 import { FaCircleExclamation } from "react-icons/fa6";
 import Progress from "../../components/Progress";
 
+function getQueryParam(name: string): string | null {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
 function AdmissionConf() {
+  const selectedBranch =
+    getQueryParam("branch") || localStorage.getItem("branch") || "";
+  const studentStatus =
+    getQueryParam("status") || localStorage.getItem("status") || "";
+
   return (
     <div className="container">
       <div className="container1">
@@ -57,7 +67,9 @@ function AdmissionConf() {
           <div className="choices2">
             <button
               className="btn5"
-              onClick={() => (window.location.href = "/requirements")}
+              onClick={() =>
+                (window.location.href = `/requirements?branch=${selectedBranch}&status=${studentStatus}`)
+              }
             >
               Cancel
             </button>

@@ -3,7 +3,59 @@ import { FaCircleExclamation } from "react-icons/fa6";
 import "../../App.css";
 import Progress from "../../components/Progress";
 
+function getQueryParam(name: string): string | null {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(name);
+}
+
+function chunkArray(arr: string[], size: number) {
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+}
+
 function AdmissionReq() {
+  const selectedBranch = getQueryParam("branch") || "";
+  const studentStatus = getQueryParam("status") || "";
+
+  // Requirements
+  const requirements: Record<string, string[]> = {
+    "Junior High Completer": [
+      "Form 137",
+      "Grade Report Card",
+      "Birth Certificate/PSA",
+      "Good Moral Character",
+    ],
+    "Senior High Graduate": [
+      "Form 137",
+      "Diploma/Certificate of Graduation",
+      "Birth Certificate/PSA",
+      "Good Moral Character",
+    ],
+    Transferee: [
+      "Transcript of Records (TOR)",
+      "Honorable Dismissal",
+      "Birth Certificate/PSA",
+      "Good Moral Character",
+    ],
+    "Foreign Student": [
+      "Passport",
+      "Visa",
+      "Birth Certificate/PSA",
+      "Good Moral Character",
+    ],
+    "Cross-Registrant": [
+      "Permit to Cross-Register",
+      "Current School ID",
+      "Birth Certificate/PSA",
+      "Good Moral Character",
+    ],
+  };
+
+  const groupedRequirements = chunkArray(requirements[studentStatus] || [], 2);
+
   return (
     <div className="container">
       <div className="container1">
@@ -18,89 +70,30 @@ function AdmissionReq() {
           </div>
 
           <form className="Upload-form">
-            <div className="upload-row">
-              <div className="upload-group">
-                <label htmlFor="form137" className="label-1">
-                  Form 137
-                </label>
-                <label className="file-wrapper">
-                  <span className="upload-text">Click to upload form 137</span>
-                  <div className="cont-icon">
-                    <MdOutlineDriveFolderUpload className="icon" />
+            {groupedRequirements.map((row, rowIndex) => (
+              <div className="upload-row" key={rowIndex}>
+                {row.map((req, index) => (
+                  <div className="upload-group" key={index}>
+                    <label htmlFor={req.replace(/\s+/g, "").toLowerCase()}>
+                      {req}
+                    </label>
+                    <label className="file-wrapper">
+                      <span className="upload-text">Click to upload {req}</span>
+                      <div className="cont-icon">
+                        <MdOutlineDriveFolderUpload className="icon" />
+                      </div>
+                      <input
+                        className="file-input"
+                        type="file"
+                        id={req.replace(/\s+/g, "").toLowerCase()}
+                        name={req.replace(/\s+/g, "").toLowerCase()}
+                        required
+                      />
+                    </label>
                   </div>
-                  <input
-                    className="file-input"
-                    type="file"
-                    id="form137"
-                    name="form137"
-                    required
-                  />
-                </label>
+                ))}
               </div>
-
-              <div className="upload-group">
-                <label htmlFor="gradeCard" className="grc">
-                  Grade Report Card
-                </label>
-                <label className="file-wrapper">
-                  <span className="upload-text">
-                    Click to upload grade report card
-                  </span>
-                  <div className="cont-icon">
-                    <MdOutlineDriveFolderUpload className="icon" />
-                  </div>
-                  <input
-                    className="file-input"
-                    type="file"
-                    id="gradeCard"
-                    name="gradeCard"
-                    required
-                  />
-                </label>
-              </div>
-            </div>
-
-            <div className="upload-row">
-              <div className="upload-group">
-                <label htmlFor="form137" className="label-2">
-                  Birth Certificate/PSA
-                </label>
-                <label className="file-wrapper">
-                  <span className="upload-text">
-                    Click to upload birth certificate/PSA
-                  </span>
-                  <div className="cont-icon">
-                    <MdOutlineDriveFolderUpload className="icon" />
-                  </div>
-                  <input
-                    className="file-input"
-                    type="file"
-                    id="birthCertificate"
-                    name="birthCertificate"
-                    required
-                  />
-                </label>
-              </div>
-
-              <div className="upload-group">
-                <label htmlFor="goodMoral">Good Moral Character</label>
-                <label className="file-wrapper">
-                  <span className="upload-text">
-                    Click to upload good moral character
-                  </span>
-                  <div className="cont-icon">
-                    <MdOutlineDriveFolderUpload className="icon" />
-                  </div>
-                  <input
-                    className="file-input"
-                    type="file"
-                    id="goodMoral"
-                    name="goodMoral"
-                    required
-                  />
-                </label>
-              </div>
-            </div>
+            ))}
 
             <div className="choices-note">
               <div className="note-header">
@@ -123,13 +116,17 @@ function AdmissionReq() {
             <div className="choices2">
               <button
                 className="btn5"
-                onClick={() => (window.location.href = "/information")}
+                onClick={() =>
+                  (window.location.href = `/information?branch=${selectedBranch}&status=${studentStatus}`)
+                }
               >
                 Cancel
               </button>
               <button
                 className="btn6"
-                onClick={() => (window.location.href = "/confirmation")}
+                onClick={() =>
+                  (window.location.href = `/confirmation?branch=${selectedBranch}&status=${studentStatus}`)
+                }
               >
                 Continue
               </button>
