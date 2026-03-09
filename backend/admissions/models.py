@@ -7,7 +7,7 @@ class Student(models.Model):
     email = models.EmailField(unique=True)
     mobile = models.CharField(max_length=20)
     birthdate = models.DateField()
-    password = models.CharField(max_length=128)  # later we’ll hash this
+    password = models.CharField(max_length=128) 
 
     def __str__(self):
         return f"{self.studentNumber} - {self.email}"

@@ -223,7 +223,7 @@ function AdmissionInfo() {
           <div className="syb">
             Personal Information
             <p>
-              Campus selected:{" "}
+              Branch selected:{" "}
               <strong style={{ margin: "4px", color: "#1A3D5C" }}>
                 {" "}
                 {selectedBranch || "—"}

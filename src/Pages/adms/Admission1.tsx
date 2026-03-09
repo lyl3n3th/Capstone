@@ -1,10 +1,35 @@
 import "../../App.css";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import Progress from "../../components/Progress";
 
 function Admission1() {
   const [selected, setSelected] = useState<string>("");
+  const [status, setStatus] = useState("Select Status");
+  const [isMenuOpenStatus, setIsMenuOpenStatus] = useState(false);
+  const wrapperRefStatus = useRef<HTMLDivElement>(null);
+
+  const statusOptions = [
+    "Junior High Completer",
+    "Senior High Graduate",
+    "Transferee",
+    "Foreign Student",
+    "Cross-Registrant",
+  ];
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        wrapperRefStatus.current &&
+        !wrapperRefStatus.current.contains(event.target as Node)
+      ) {
+        setIsMenuOpenStatus(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="container">
@@ -14,6 +39,33 @@ function Admission1() {
 
       <div className="mcontainer">
         <div className="header">
+          <div className="dropdownb" ref={wrapperRefStatus}>
+            <label>Student Status</label>
+            <div
+              className={`selectb ${isMenuOpenStatus ? "select-clicked" : ""}`}
+              onClick={() => setIsMenuOpenStatus((p) => !p)}
+            >
+              <span className="selected">{status}</span>
+              <div
+                className={`cartb ${isMenuOpenStatus ? "cart-rotate" : ""}`}
+              ></div>
+            </div>
+            <ul className={`menub ${isMenuOpenStatus ? "show" : ""}`}>
+              {statusOptions.map((opt) => (
+                <li
+                  key={opt}
+                  onClick={() => {
+                    setStatus(opt);
+                    setIsMenuOpenStatus(false);
+                  }}
+                >
+                  {opt}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <hr style={{ opacity: 0.1, margin: "20px 0" }} />
           <div className="syb">
             Select Your Branch
             <p>Choose the branch you wish to enroll in</p>

@@ -54,6 +54,46 @@ function LoginReg() {
     setCurrentSlide(index);
   };
 
+  //login state
+  const [loginData, setLoginData] = useState({
+    branch: "",
+    studentNumber: "",
+    password: "",
+  });
+
+  //login handle
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!loginData.branch) {
+      alert("Please select a branch!");
+      return;
+    }
+
+    const response = await fetch(
+      "http://127.0.0.1:8000/api/admissions/login/",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginData),
+      },
+    );
+
+    const result = await response.json();
+    alert(result.message);
+
+    if (response.ok) {
+      console.log("Logged in student:", result);
+      // later: store student info in localStorage or context
+      setLoginData({
+        branch: "",
+        studentNumber: "",
+        password: "",
+      });
+      setSelectedBranch("");
+    }
+  };
+
   return (
     <div className="login-page">
       <div className="login-wrapper">
@@ -104,12 +144,7 @@ function LoginReg() {
               </p>
             </div>
 
-            <form
-              className="login-form"
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
-            >
+            <form className="login-form" onSubmit={handleLogin}>
               <div className="dropdownlog" ref={wrapperRefBranch}>
                 <label className="lbel">Select Branch</label>
                 <div
@@ -128,6 +163,7 @@ function LoginReg() {
                       key={branch}
                       onClick={() => {
                         setSelectedBranch(branch);
+                        setLoginData({ ...loginData, branch });
                         setIsMenuOpenBranch(false);
                       }}
                     >
@@ -144,10 +180,15 @@ function LoginReg() {
                 <input
                   id="username"
                   type="text"
-                  name="username"
-                  placeholder=""
+                  name="studentNumber"
+                  value={loginData.studentNumber}
+                  onChange={(e) =>
+                    setLoginData({
+                      ...loginData,
+                      studentNumber: e.target.value,
+                    })
+                  }
                   required
-                  autoComplete="username"
                 />
               </div>
 
@@ -158,9 +199,11 @@ function LoginReg() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder=""
+                    value={loginData.password}
+                    onChange={(e) =>
+                      setLoginData({ ...loginData, password: e.target.value })
+                    }
                     required
-                    autoComplete="current-password"
                   />
                   <button
                     type="button"
