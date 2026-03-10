@@ -5,6 +5,25 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Student
+from .models import Enrollee, Branch
+from .serializers import EnrolleeSerializer
+
+
+
+@api_view(["POST"])
+def admission_branch(request):
+    branch_name = request.data.get("branch")
+    status = request.data.get("status")
+
+    if not branch_name or not status:
+        return Response({"error": "Branch and status are required"}, status=400)
+
+    branch, _ = Branch.objects.get_or_create(name=branch_name, defaults={"location": branch_name})
+    enrollee = Enrollee.objects.create(branch=branch, status=status)
+
+    serializer = EnrolleeSerializer(enrollee)
+    return Response(serializer.data, status=201)
+
 
 
 class RegisterView(APIView):
@@ -52,4 +71,6 @@ class LoginView(APIView):
             "studentNumber": student.studentNumber,
             "email": student.email
         }, status=status.HTTP_200_OK)
+    
+
     

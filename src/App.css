@@ -1587,11 +1587,11 @@
   border: 1px solid #e0e0e0;
   background: white;
   border-radius: 15px;
-  padding: 30px;
+  padding: 20px;
   width: 400px;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
 }
 
 
@@ -1721,6 +1721,12 @@
   align-items: center;
   gap: 10px;
 }
+
+.choice2.confm {
+  margin-top: 20px;
+}
+
+
 
 /* Tablet screens */
 @media (max-width: 800px) {

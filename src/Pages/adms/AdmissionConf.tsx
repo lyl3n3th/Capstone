@@ -2,10 +2,17 @@ import "../../App.css";
 import { FaCopy } from "react-icons/fa";
 import { FaCircleExclamation } from "react-icons/fa6";
 import Progress from "../../components/Progress";
+import React, { useState, useEffect } from "react";
 
 function getQueryParam(name: string): string | null {
   const params = new URLSearchParams(window.location.search);
   return params.get(name);
+}
+
+function generateTrackingNumber() {
+  const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, ""); // YYYYMMDD
+  const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase(); // 6 chars
+  return `AICS-${datePart}-${randomPart}`;
 }
 
 function AdmissionConf() {
@@ -13,6 +20,13 @@ function AdmissionConf() {
     getQueryParam("branch") || localStorage.getItem("branch") || "";
   const studentStatus =
     getQueryParam("status") || localStorage.getItem("status") || "";
+
+  const [trackingNumber, setTrackingNumber] = useState("");
+
+  useEffect(() => {
+    // Generate once when component mounts
+    setTrackingNumber(generateTrackingNumber());
+  }, []);
 
   return (
     <div className="container">
@@ -35,13 +49,16 @@ function AdmissionConf() {
             <label htmlFor="trackingno" className="track-label">
               Tracking Number:
             </label>
-            <div className="cont-track"></div>
+            <div className="cont-track">{trackingNumber}</div>
           </div>
 
           <div className="copy-wrapper">
             <button
               className="copy-btn"
-              onClick={() => (window.location.href = "/requirements")}
+              onClick={() => {
+                navigator.clipboard.writeText(trackingNumber);
+                alert("Tracking number copied!");
+              }}
             >
               <FaCopy className="copy-icon" />
               Copy Tracking Number

@@ -9,6 +9,36 @@ function Admission1() {
   const [isMenuOpenStatus, setIsMenuOpenStatus] = useState(false);
   const wrapperRefStatus = useRef<HTMLDivElement>(null);
 
+  const [loading, setLoading] = useState(false);
+
+  //continue
+
+  const handleContinue = async () => {
+    if (!selected || status === "Select Status") return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(
+        "http://localhost:8000/api/admissions/branch/",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ branch: selected, status }),
+        },
+      );
+
+      if (!response.ok) throw new Error("Failed to save progress");
+
+      const data = await response.json();
+      localStorage.setItem("enrolleeId", data.id);
+      window.location.href = `/information?branch=${selected}&status=${status}`;
+    } catch (err) {
+      alert("Error saving branch/status");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const statusOptions = [
     "Junior High Completer",
     "Senior High Graduate",
@@ -127,14 +157,10 @@ function Admission1() {
             </button>
             <button
               className={`btn2 ${!selected || status === "Select Status" ? "disabled" : ""}`}
-              onClick={() => {
-                if (selected && status !== "Select Status") {
-                  window.location.href = `/information?branch=${selected}&status=${status}`;
-                }
-              }}
-              disabled={!selected || status === "Select Status"}
+              onClick={handleContinue}
+              disabled={!selected || status === "Select Status" || loading}
             >
-              Continue
+              {loading ? "Saving..." : "Continue"}
             </button>
           </div>
         </div>
