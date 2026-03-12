@@ -6,7 +6,7 @@ admin.site.register(Student)
 
 @admin.register(Enrollee)
 class EnrolleeAdmin(admin.ModelAdmin):
-    list_display = ("id", "status", "branch", "progress_step", "submitted")
+    list_display = ("id", "tracking_number", "status", "branch", "progress_step", "submitted")
 
 @admin.register(Branch)
 class BranchAdmin(admin.ModelAdmin):

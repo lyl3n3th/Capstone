@@ -2,6 +2,7 @@ import { MdOutlineDriveFolderUpload } from "react-icons/md";
 import { FaCircleExclamation } from "react-icons/fa6";
 import "../../App.css";
 import Progress from "../../components/Progress";
+import React, { useState } from "react";
 
 function getQueryParam(name: string): string | null {
   const params = new URLSearchParams(window.location.search);
@@ -19,6 +20,10 @@ function chunkArray(arr: string[], size: number) {
 function AdmissionReq() {
   const selectedBranch = getQueryParam("branch") || "";
   const studentStatus = getQueryParam("status") || "";
+
+  const trackingNumber = getQueryParam("trackingNumber") || "";
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Requirements
   const requirements: Record<string, string[]> = {
@@ -55,6 +60,64 @@ function AdmissionReq() {
   };
 
   const groupedRequirements = chunkArray(requirements[studentStatus] || [], 2);
+
+  // Submit handler
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.append("trackingNumber", trackingNumber);
+
+    groupedRequirements.flat().forEach((req) => {
+      const input = document.getElementById(
+        req.replace(/\s+/g, "").toLowerCase(),
+      ) as HTMLInputElement;
+      if (input?.files?.[0]) {
+        formData.append(req, input.files[0]);
+      }
+    });
+
+    try {
+      const response = await fetch("/api/admissions/requirements/", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        alert("Upload failed");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Uploaded:", data);
+
+      window.location.href = `/confirmation?branch=${selectedBranch}&status=${studentStatus}&trackingNumber=${trackingNumber}`;
+    } catch (err) {
+      console.error(err);
+      alert("Server error while uploading requirements.");
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancel = () => {
+    sessionStorage.setItem(
+      "enrollmentDraft",
+      JSON.stringify({
+        branch: selectedBranch,
+        status: studentStatus,
+        step: 3, // mark that you're at requirements step
+        // you can also add any other fields you want to preserve here
+      }),
+    );
+
+    window.location.href = `/information?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}`;
+  };
+
+  const handleContinue = () => {
+    window.location.href = `/confirmation?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}`;
+  };
 
   return (
     <div className="container">
@@ -116,17 +179,15 @@ function AdmissionReq() {
             <div className="choices2">
               <button
                 className="btn5"
-                onClick={() =>
-                  (window.location.href = `/information?branch=${selectedBranch}&status=${studentStatus}`)
-                }
+                onClick={handleCancel}
+                disabled={isSubmitting}
               >
                 Cancel
               </button>
               <button
                 className="btn6"
-                onClick={() =>
-                  (window.location.href = `/confirmation?branch=${selectedBranch}&status=${studentStatus}`)
-                }
+                onClick={handleContinue}
+                disabled={isSubmitting}
               >
                 Continue
               </button>

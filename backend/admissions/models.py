@@ -1,5 +1,7 @@
 from django.db import models
 import datetime, random, string
+import uuid
+from django.db import migrations
 # Create your models here.
 
 class Student(models.Model):
@@ -22,14 +24,13 @@ class Branch(models.Model):
         return self.name
 
 class Enrollee(models.Model):
-    status = models.CharField(max_length=50)  # SHS, College, Transferee, etc.
+    tracking_number = models.UUIDField(default=uuid.uuid4, editable=False)
+    status = models.CharField(max_length=50)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     progress_step = models.IntegerField(default=1)
     submitted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.status} - {self.branch.name}"
-
-
+        return f"{self.branch.name} - {self.status}"
 
 

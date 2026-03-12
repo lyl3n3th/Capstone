@@ -70,6 +70,104 @@ function AdmissionInfo() {
     "Vietnamese",
   ];
 
+  const [fname, setFname] = useState("");
+  const [lname, setLname] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [trackingNumber, setTrackingNumber] = useState("");
+
+  const [draft, setDraft] = useState<any>(null);
+  const [isLoadingDraft, setIsLoadingDraft] = useState(true);
+
+  const handleCancel = () => {
+    const draftData = {
+      trackingNumber,
+      branch: selectedBranch,
+      status: studentStatus,
+      fname,
+      lname,
+      birthday,
+      program,
+      strand_or_course: program1,
+      sex,
+      religion,
+      civil_status: civilStatus,
+      nationality,
+      step: 2,
+    };
+
+    sessionStorage.setItem("enrollmentDraft", JSON.stringify(draftData));
+
+    window.location.href = `/enroll?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}`;
+  };
+
+  const handleContinue1 = async () => {
+    const payload = {
+      first_name: fname,
+      last_name: lname,
+      middle_name:
+        (document.getElementById("mname") as HTMLInputElement)?.value?.trim() ??
+        "",
+      suffix:
+        (
+          document.getElementById("suffix") as HTMLInputElement
+        )?.value?.trim() ?? "",
+      birthday,
+      place_of_birth:
+        (document.getElementById("pofb") as HTMLInputElement)?.value?.trim() ??
+        "",
+      sex,
+      religion,
+      civil_status: civilStatus,
+      nationality,
+      address:
+        (
+          document.getElementById("address") as HTMLInputElement
+        )?.value?.trim() ?? "",
+      email:
+        (document.getElementById("email") as HTMLInputElement)?.value?.trim() ??
+        "",
+      contact:
+        (
+          document.getElementById("contact") as HTMLInputElement
+        )?.value?.trim() ?? "",
+      last_school_attended:
+        (
+          document.getElementById("lastSchool") as HTMLInputElement
+        )?.value?.trim() ?? "",
+      year_completion:
+        (
+          document.getElementById("yearCompletion") as HTMLInputElement
+        )?.value?.trim() ?? "",
+      lrn:
+        (document.getElementById("lrn") as HTMLInputElement)?.value?.trim() ??
+        "",
+      program,
+      strand_or_course: program1,
+      branch: selectedBranch,
+      student_status: studentStatus,
+    };
+
+    const response = await fetch("/api/admissions/step2/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.ok) {
+      window.location.href = `/requirements?branch=${selectedBranch}&status=${studentStatus}&trackingNumber=${trackingNumber}`;
+    } else {
+      alert("Submission failed");
+    }
+  };
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("enrollmentDraft");
+    if (saved) {
+      setDraft(JSON.parse(saved));
+    }
+    setIsLoadingDraft(false);
+  }, []);
+
   const selectedBranch = getQueryParam("branch") || "";
   //values from admission1
   const studentStatus = getQueryParam("status") || "";
@@ -107,6 +205,124 @@ function AdmissionInfo() {
       "ICT - Information and Communications Technology",
       "HE - Home Economics",
     ],
+  };
+
+  const isFormValid = (): boolean => {
+    if (program === "Program" || program1 === "Strand/Course") return false;
+    if (sex === "Sex") return false;
+    if (religion === "Religion") return false;
+    if (civilStatus === "Civil Status") return false;
+    if (nationality === "Nationality") return false;
+
+    const requiredFields = [
+      "fname",
+      "lname",
+      "birthday",
+      "address",
+      "email",
+      "contact",
+      "lastSchool",
+      "yearCompletion",
+      "lrn",
+    ];
+
+    return requiredFields.every((id) => {
+      const el = document.getElementById(id) as HTMLInputElement | null;
+      return el && el.value.trim() !== "";
+    });
+  };
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleContinue = async () => {
+    if (!isFormValid()) {
+      alert("Please complete all required fields.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const payload = {
+      first_name:
+        (document.getElementById("fname") as HTMLInputElement)?.value?.trim() ??
+        "",
+      last_name:
+        (document.getElementById("lname") as HTMLInputElement)?.value?.trim() ??
+        "",
+      middle_name:
+        (document.getElementById("mname") as HTMLInputElement)?.value?.trim() ??
+        "",
+      suffix:
+        (
+          document.getElementById("suffix") as HTMLInputElement
+        )?.value?.trim() ?? "",
+
+      birthday:
+        (
+          document.getElementById("birthday") as HTMLInputElement
+        )?.value?.trim() ?? "",
+      place_of_birth:
+        (document.getElementById("pofb") as HTMLInputElement)?.value?.trim() ??
+        "",
+      sex,
+      religion,
+      civil_status: civilStatus,
+      nationality,
+
+      address:
+        (
+          document.getElementById("address") as HTMLInputElement
+        )?.value?.trim() ?? "",
+      email:
+        (document.getElementById("email") as HTMLInputElement)?.value?.trim() ??
+        "",
+      contact:
+        (
+          document.getElementById("contact") as HTMLInputElement
+        )?.value?.trim() ?? "",
+
+      last_school_attended:
+        (
+          document.getElementById("lastSchool") as HTMLInputElement
+        )?.value?.trim() ?? "",
+      year_completion:
+        (
+          document.getElementById("yearCompletion") as HTMLInputElement
+        )?.value?.trim() ?? "",
+      lrn:
+        (document.getElementById("lrn") as HTMLInputElement)?.value?.trim() ??
+        "",
+
+      program,
+      strand_or_course: program1,
+
+      branch: selectedBranch,
+      student_status: studentStatus,
+    };
+
+    try {
+      const response = await fetch("/api/admissions/step2/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(
+          "Validation error: " + JSON.stringify(data.errors || data, null, 2),
+        );
+        return;
+      }
+
+      window.location.href = `/requirements?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}`;
+    } catch (err) {
+      console.error(err);
+      alert(
+        "Cannot connect to server.\n\n1. Is Django running on port 8000?\n2. Did you run npm run dev?",
+      );
+    }
   };
 
   //reset if non-bacoor
@@ -518,19 +734,18 @@ function AdmissionInfo() {
             <div className="choices3">
               <button
                 className="btn3"
-                onClick={() =>
-                  (window.location.href = `/enroll?branch=${selectedBranch}&status=${studentStatus}`)
-                }
+                onClick={handleCancel}
+                disabled={isSubmitting}
               >
                 Cancel
               </button>
               <button
-                className="btn4"
-                onClick={() => {
-                  window.location.href = `/requirements?branch=${selectedBranch}&status=${studentStatus}`;
-                }}
+                type="button"
+                className={`btn4 ${!isFormValid() || isSubmitting ? "disabled" : ""}`}
+                onClick={handleContinue1}
+                disabled={!isFormValid() || isSubmitting}
               >
-                Continue
+                {isSubmitting ? "Saving..." : "Continue"}
               </button>
             </div>
           </form>

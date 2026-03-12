@@ -2,42 +2,65 @@ import "../../App.css";
 import { useState, useRef, useEffect } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import Progress from "../../components/Progress";
+import { v4 as uuidv4 } from "uuid";
 
 function Admission1() {
-  const [selected, setSelected] = useState<string>("");
+  const [selectedBranch, setSelectedBranch] = useState<string>("");
   const [status, setStatus] = useState("Select Status");
   const [isMenuOpenStatus, setIsMenuOpenStatus] = useState(false);
   const wrapperRefStatus = useRef<HTMLDivElement>(null);
 
   const [loading, setLoading] = useState(false);
 
-  //continue
+  const branchRules: Record<string, string[]> = {
+    "Junior High Completer": ["bacoor", "taytay", "GMA"],
+    "Senior High Graduate": ["bacoor"],
+    Transferee: ["bacoor", "taytay", "GMA"],
+    "Foreign Student": ["bacoor", "taytay", "GMA"],
+    "Cross-Registrant": ["bacoor", "taytay", "GMA"],
+  };
 
-  const handleContinue = async () => {
-    if (!selected || status === "Select Status") return;
+  const isBranchDisabled = (branchName: string) => {
+    if (status === "Select Status") return true;
+    return !branchRules[status]?.includes(branchName);
+  };
+
+  const handleContinue = () => {
+    if (!selectedBranch || status === "Select Status") {
+      alert("Please select student status and branch.");
+      return;
+    }
 
     setLoading(true);
-    try {
-      const response = await fetch(
-        "http://localhost:8000/api/admissions/branch/",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ branch: selected, status }),
-        },
-      );
 
-      if (!response.ok) throw new Error("Failed to save progress");
+    const fakeTrackingNumber = `TRK-${uuidv4().slice(0, 8).toUpperCase()}`;
 
-      const data = await response.json();
-      localStorage.setItem("enrolleeId", data.id);
-      window.location.href = `/information?branch=${selected}&status=${status}`;
-    } catch (err) {
-      alert("Error saving branch/status");
-    } finally {
+    sessionStorage.setItem(
+      "enrollmentDraft",
+      JSON.stringify({
+        trackingNumber: fakeTrackingNumber,
+        branch: selectedBranch,
+        status: status,
+        step: 1,
+        createdAt: new Date().toISOString(),
+      }),
+    );
+
+    setTimeout(() => {
       setLoading(false);
-    }
+
+      window.location.href = `/information?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(status)}`;
+    }, 600);
   };
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("enrollmentDraft");
+    if (saved) {
+      const draft = JSON.parse(saved);
+      setStatus(draft.status || "Select Status");
+      setSelectedBranch(draft.branch || "");
+    }
+  }, []);
 
   const statusOptions = [
     "Junior High Completer",
@@ -49,14 +72,14 @@ function Admission1() {
 
   // Close dropdown when clicking outside
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    const handleClickOutside = (event: MouseEvent) => {
       if (
         wrapperRefStatus.current &&
         !wrapperRefStatus.current.contains(event.target as Node)
       ) {
         setIsMenuOpenStatus(false);
       }
-    }
+    };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -87,6 +110,7 @@ function Admission1() {
                   onClick={() => {
                     setStatus(opt);
                     setIsMenuOpenStatus(false);
+                    setSelectedBranch("");
                   }}
                 >
                   {opt}
@@ -96,69 +120,52 @@ function Admission1() {
           </div>
 
           <hr style={{ opacity: 0.1, margin: "20px 0" }} />
+
           <div className="syb">
             Select Your Branch
             <p>Choose the branch you wish to enroll in</p>
           </div>
 
-          <div
-            className={`choices ${selected === "Taytay" ? "selected" : ""} ${
-              status === "Senior High Graduate" ? "disabled-branch" : ""
-            }`}
-            onClick={() =>
-              status !== "Senior High Graduate" && setSelected("Taytay")
-            }
-          >
-            <span className="circle1">
-              <FaLocationDot />
-            </span>
-            <div className="location-text">
-              <p className="location">Taytay</p>
-              <p className="campus">Taytay branch</p>
+          {["bacoor", "taytay", "GMA"].map((branchName) => (
+            <div
+              key={branchName}
+              className={`choices ${
+                selectedBranch === branchName ? "selected" : ""
+              } ${isBranchDisabled(branchName) ? "disabled-branch" : ""}`}
+              onClick={() =>
+                !isBranchDisabled(branchName) && setSelectedBranch(branchName)
+              }
+            >
+              <span className="circle1">
+                <FaLocationDot />
+              </span>
+              <div className="location-text">
+                <p className="location">
+                  {branchName.charAt(0).toUpperCase() + branchName.slice(1)}
+                </p>
+                <p className="campus">
+                  {branchName.charAt(0).toUpperCase() + branchName.slice(1)}{" "}
+                  branch
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div
-            className={`choices ${selected === "Bacoor" ? "selected" : ""}`}
-            onClick={() => setSelected("Bacoor")}
-          >
-            <span className="circle1">
-              <FaLocationDot />
-            </span>
-            <div className="location-text">
-              <p className="location">Bacoor</p>
-              <p className="campus">Bacoor branch</p>
-            </div>
-          </div>
-
-          <div
-            className={`choices ${selected === "GMA" ? "selected" : ""} ${
-              status === "Senior High Graduate" ? "disabled-branch" : ""
-            }`}
-            onClick={() =>
-              status !== "Senior High Graduate" && setSelected("GMA")
-            }
-          >
-            <span className="circle1">
-              <FaLocationDot />
-            </span>
-            <div className="location-text">
-              <p className="location">GMA</p>
-              <p className="campus">GMA branch</p>
-            </div>
-          </div>
+          ))}
 
           <div className="choices2">
             <button
               className="btn1"
               onClick={() => (window.location.href = "/admission")}
+              disabled={loading}
             >
               Cancel
             </button>
+
             <button
-              className={`btn2 ${!selected || status === "Select Status" ? "disabled" : ""}`}
+              className={`btn2 ${!selectedBranch || status === "Select Status" || loading ? "disabled" : ""}`}
               onClick={handleContinue}
-              disabled={!selected || status === "Select Status" || loading}
+              disabled={
+                !selectedBranch || status === "Select Status" || loading
+              }
             >
               {loading ? "Saving..." : "Continue"}
             </button>
