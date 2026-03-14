@@ -1275,6 +1275,7 @@
 @media (max-width: 860px) {
   .header {
     padding: 22px;
+    height: 870px;
   }
   .exam-card { padding: 20px; }
   .add-calendar .btn6 { width: 100%; }
@@ -1315,8 +1316,11 @@
   }
 
   .grc {
-   
    text-align: center !important;
+  }
+
+  .reqcho {
+    flex-direction: column;
   }
 
 }
@@ -1336,6 +1340,10 @@
   .upload-group {
     width: 100%;             
     align-items: center;      
+  }
+
+   .reqcho {
+    flex-direction: column;
   }
 }
 
@@ -1552,10 +1560,12 @@
   box-shadow: 0 2px 4px rgb(0, 0, 0, 0.3);
 }
 
+
+
 /*AdmissionConf css*/
 
 .syb1 {
-  margin-top: 30px;
+  margin-top: 10px;
 }
 
 .status .status-text {
@@ -1722,9 +1732,11 @@
   gap: 10px;
 }
 
-.choice2.confm {
+.confcho {
+  top: 70px;
   margin-top: 20px;
 }
+
 
 
 
@@ -1815,5 +1827,19 @@
     font-size: 14px;
     padding: 10px 14px;
   }
+
+  .confcho{
+    flex-direction: column;
+    top: 50px;
+  }
+
+  .btn6 {
+    font-size: 12px;
+  }
+  .btn5 {
+    font-size: 12px;
+  }
+
+
 }
 

@@ -3,7 +3,7 @@ import { useRef } from "react";
 import "../../App.css";
 import Progress from "../../components/Progress";
 
-// get qeury
+// get query
 function getQueryParam(name: string): string | null {
   const params = new URLSearchParams(window.location.search);
   return params.get(name);
@@ -36,13 +36,35 @@ function AdmissionInfo() {
   const wrapperRefNat = useRef<HTMLDivElement>(null);
 
   //Sex drop down
-
   const [menuOpenSex, setIsMenuOpenSex] = useState(false);
   const [sex, setSex] = useState("Sex");
   const wrapperRefSex = useRef<HTMLDivElement>(null);
 
-  // available options
-  const programOptions = ["College", "Senior High School"];
+  //submit handle
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  //info states
+  const [fname, setFname] = useState("");
+  const [lname, setLname] = useState("");
+  const [mname, setMname] = useState("");
+  const [suffix, setSuffix] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [pofb, setPofb] = useState("");
+  const [address, setAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
+  const [lastSchool, setLastSchool] = useState("");
+  const [yearCompletion, setYearCompletion] = useState("");
+  const [lrn, setLrn] = useState("");
+  const [trackingNumber, setTrackingNumber] = useState("");
+
+  //draft
+  const [isLoadingDraft, setIsLoadingDraft] = useState(true);
+
+  //branch admission data
+  const selectedBranch = getQueryParam("branch") || "";
+  const studentStatus = getQueryParam("status") || "";
+  const fromRequirements = getQueryParam("from") === "requirements";
 
   const sexOptions = ["Male", "Female"];
   const religionOptions = ["Roman Catholic", "Christian", "Muslim", "Others"];
@@ -69,108 +91,6 @@ function AdmissionInfo() {
     "Thai",
     "Vietnamese",
   ];
-
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [trackingNumber, setTrackingNumber] = useState("");
-
-  const [draft, setDraft] = useState<any>(null);
-  const [isLoadingDraft, setIsLoadingDraft] = useState(true);
-
-  const handleCancel = () => {
-    const draftData = {
-      trackingNumber,
-      branch: selectedBranch,
-      status: studentStatus,
-      fname,
-      lname,
-      birthday,
-      program,
-      strand_or_course: program1,
-      sex,
-      religion,
-      civil_status: civilStatus,
-      nationality,
-      step: 2,
-    };
-
-    sessionStorage.setItem("enrollmentDraft", JSON.stringify(draftData));
-
-    window.location.href = `/enroll?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}`;
-  };
-
-  const handleContinue1 = async () => {
-    const payload = {
-      first_name: fname,
-      last_name: lname,
-      middle_name:
-        (document.getElementById("mname") as HTMLInputElement)?.value?.trim() ??
-        "",
-      suffix:
-        (
-          document.getElementById("suffix") as HTMLInputElement
-        )?.value?.trim() ?? "",
-      birthday,
-      place_of_birth:
-        (document.getElementById("pofb") as HTMLInputElement)?.value?.trim() ??
-        "",
-      sex,
-      religion,
-      civil_status: civilStatus,
-      nationality,
-      address:
-        (
-          document.getElementById("address") as HTMLInputElement
-        )?.value?.trim() ?? "",
-      email:
-        (document.getElementById("email") as HTMLInputElement)?.value?.trim() ??
-        "",
-      contact:
-        (
-          document.getElementById("contact") as HTMLInputElement
-        )?.value?.trim() ?? "",
-      last_school_attended:
-        (
-          document.getElementById("lastSchool") as HTMLInputElement
-        )?.value?.trim() ?? "",
-      year_completion:
-        (
-          document.getElementById("yearCompletion") as HTMLInputElement
-        )?.value?.trim() ?? "",
-      lrn:
-        (document.getElementById("lrn") as HTMLInputElement)?.value?.trim() ??
-        "",
-      program,
-      strand_or_course: program1,
-      branch: selectedBranch,
-      student_status: studentStatus,
-    };
-
-    const response = await fetch("/api/admissions/step2/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (response.ok) {
-      window.location.href = `/requirements?branch=${selectedBranch}&status=${studentStatus}&trackingNumber=${trackingNumber}`;
-    } else {
-      alert("Submission failed");
-    }
-  };
-
-  useEffect(() => {
-    const saved = sessionStorage.getItem("enrollmentDraft");
-    if (saved) {
-      setDraft(JSON.parse(saved));
-    }
-    setIsLoadingDraft(false);
-  }, []);
-
-  const selectedBranch = getQueryParam("branch") || "";
-  //values from admission1
-  const studentStatus = getQueryParam("status") || "";
 
   let availablePrograms: string[] = [];
 
@@ -207,6 +127,7 @@ function AdmissionInfo() {
     ],
   };
 
+  // Form validation
   const isFormValid = (): boolean => {
     if (program === "Program" || program1 === "Strand/Course") return false;
     if (sex === "Sex") return false;
@@ -232,7 +153,185 @@ function AdmissionInfo() {
     });
   };
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Save draft to sessionStorage
+  const saveDraft = () => {
+    const draftData = {
+      step: 2,
+      trackingNumber,
+      branch: selectedBranch,
+      status: studentStatus,
+      timestamp: new Date().toISOString(),
+
+      // Personal Information
+      fname,
+      lname,
+      middle_name: mname,
+      suffix,
+      birthday,
+      place_of_birth: pofb,
+      address,
+      email,
+      contact,
+      last_school_attended: lastSchool,
+      year_completion: yearCompletion,
+      lrn,
+
+      // Dropdown selections
+      program,
+      strand_or_course: program1,
+      sex,
+      religion,
+      civil_status: civilStatus,
+      nationality,
+    };
+
+    sessionStorage.setItem("enrollmentDraft", JSON.stringify(draftData));
+  };
+
+  // Load draft from sessionStorage
+  const loadDraft = () => {
+    const saved = sessionStorage.getItem("enrollmentDraft");
+    if (!saved) {
+      setIsLoadingDraft(false);
+      return;
+    }
+
+    try {
+      const draft = JSON.parse(saved);
+
+      // Check if draft is for the same branch and status
+      if (draft.branch !== selectedBranch || draft.status !== studentStatus) {
+        sessionStorage.removeItem("enrollmentDraft");
+        setIsLoadingDraft(false);
+        return;
+      }
+
+      console.log("Loading draft:", draft);
+
+      // Set all text input states
+      if (draft.fname) setFname(draft.fname);
+      if (draft.lname) setLname(draft.lname);
+      if (draft.middle_name) setMname(draft.middle_name);
+      if (draft.suffix) setSuffix(draft.suffix);
+      if (draft.birthday) setBirthday(draft.birthday);
+      if (draft.place_of_birth) setPofb(draft.place_of_birth);
+      if (draft.address) setAddress(draft.address);
+      if (draft.email) setEmail(draft.email);
+      if (draft.contact) setContact(draft.contact);
+      if (draft.last_school_attended) setLastSchool(draft.last_school_attended);
+      if (draft.year_completion) setYearCompletion(draft.year_completion);
+      if (draft.lrn) setLrn(draft.lrn);
+
+      if (draft.sex) setSex(draft.sex);
+      if (draft.religion) setReligion(draft.religion);
+      if (draft.civil_status) setCivilStatus(draft.civil_status);
+      if (draft.nationality) setNationality(draft.nationality);
+      if (draft.trackingNumber) setTrackingNumber(draft.trackingNumber);
+
+      if (draft.program) {
+        console.log("Setting program to:", draft.program);
+        setProgram(draft.program);
+
+        if (draft.strand_or_course) {
+          console.log("Will set strand to:", draft.strand_or_course);
+
+          setTimeout(() => {
+            console.log("Now setting strand to:", draft.strand_or_course);
+            setProgram1(draft.strand_or_course);
+          }, 100);
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to load draft", err);
+    } finally {
+      setIsLoadingDraft(false);
+    }
+  };
+
+  useEffect(() => {
+    if (fromRequirements) {
+      console.log("Returning from requirements, reloading draft...");
+      loadDraft();
+    }
+  }, [fromRequirements]);
+
+  // Auto-save draft
+  useEffect(() => {
+    if (!isLoadingDraft) {
+      const timeoutId = setTimeout(() => {
+        saveDraft();
+      }, 1000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [
+    fname,
+    lname,
+    mname,
+    suffix,
+    birthday,
+    pofb,
+    address,
+    email,
+    contact,
+    lastSchool,
+    yearCompletion,
+    lrn,
+    program,
+    program1,
+    sex,
+    religion,
+    civilStatus,
+    nationality,
+    trackingNumber,
+  ]);
+
+  // Load draft on mount
+  useEffect(() => {
+    loadDraft();
+  }, []);
+
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    switch (id) {
+      case "fname":
+        setFname(value);
+        break;
+      case "lname":
+        setLname(value);
+        break;
+      case "mname":
+        setMname(value);
+        break;
+      case "suffix":
+        setSuffix(value);
+        break;
+      case "birthday":
+        setBirthday(value);
+        break;
+      case "pofb":
+        setPofb(value);
+        break;
+      case "address":
+        setAddress(value);
+        break;
+      case "email":
+        setEmail(value);
+        break;
+      case "contact":
+        setContact(value);
+        break;
+      case "lastSchool":
+        setLastSchool(value);
+        break;
+      case "yearCompletion":
+        setYearCompletion(value);
+        break;
+      case "lrn":
+        setLrn(value);
+        break;
+    }
+  };
 
   const handleContinue = async () => {
     if (!isFormValid()) {
@@ -241,61 +340,27 @@ function AdmissionInfo() {
     }
 
     setIsSubmitting(true);
+    saveDraft();
 
     const payload = {
-      first_name:
-        (document.getElementById("fname") as HTMLInputElement)?.value?.trim() ??
-        "",
-      last_name:
-        (document.getElementById("lname") as HTMLInputElement)?.value?.trim() ??
-        "",
-      middle_name:
-        (document.getElementById("mname") as HTMLInputElement)?.value?.trim() ??
-        "",
-      suffix:
-        (
-          document.getElementById("suffix") as HTMLInputElement
-        )?.value?.trim() ?? "",
-
-      birthday:
-        (
-          document.getElementById("birthday") as HTMLInputElement
-        )?.value?.trim() ?? "",
-      place_of_birth:
-        (document.getElementById("pofb") as HTMLInputElement)?.value?.trim() ??
-        "",
+      first_name: fname,
+      last_name: lname,
+      middle_name: mname,
+      suffix: suffix,
+      birthday: birthday,
+      place_of_birth: pofb,
       sex,
       religion,
       civil_status: civilStatus,
       nationality,
-
-      address:
-        (
-          document.getElementById("address") as HTMLInputElement
-        )?.value?.trim() ?? "",
-      email:
-        (document.getElementById("email") as HTMLInputElement)?.value?.trim() ??
-        "",
-      contact:
-        (
-          document.getElementById("contact") as HTMLInputElement
-        )?.value?.trim() ?? "",
-
-      last_school_attended:
-        (
-          document.getElementById("lastSchool") as HTMLInputElement
-        )?.value?.trim() ?? "",
-      year_completion:
-        (
-          document.getElementById("yearCompletion") as HTMLInputElement
-        )?.value?.trim() ?? "",
-      lrn:
-        (document.getElementById("lrn") as HTMLInputElement)?.value?.trim() ??
-        "",
-
+      address: address,
+      email: email,
+      contact: contact,
+      last_school_attended: lastSchool,
+      year_completion: yearCompletion,
+      lrn: lrn,
       program,
       strand_or_course: program1,
-
       branch: selectedBranch,
       student_status: studentStatus,
     };
@@ -313,19 +378,87 @@ function AdmissionInfo() {
         alert(
           "Validation error: " + JSON.stringify(data.errors || data, null, 2),
         );
+        setIsSubmitting(false);
         return;
       }
 
-      window.location.href = `/requirements?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}`;
+      if (data.tracking_number) {
+        setTrackingNumber(data.tracking_number);
+
+        const currentDraft = JSON.parse(
+          sessionStorage.getItem("enrollmentDraft") || "{}",
+        );
+
+        const updatedDraft = {
+          ...currentDraft,
+          trackingNumber: data.tracking_number,
+          step: 2.5,
+          timestamp: new Date().toISOString(),
+
+          fname,
+          lname,
+          mname,
+          suffix,
+          birthday,
+          pofb,
+          address,
+          email,
+          contact,
+          lastSchool,
+          yearCompletion,
+          lrn,
+          program,
+          strand_or_course: program1,
+          sex,
+          religion,
+          civil_status: civilStatus,
+          nationality,
+          branch: selectedBranch,
+          status: studentStatus,
+        };
+
+        sessionStorage.setItem("enrollmentDraft", JSON.stringify(updatedDraft));
+        console.log("Draft saved before navigation:", updatedDraft);
+      }
+
+      window.location.href = `/requirements?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${data.tracking_number || trackingNumber}`;
     } catch (err) {
       console.error(err);
-      alert(
-        "Cannot connect to server.\n\n1. Is Django running on port 8000?\n2. Did you run npm run dev?",
-      );
+      alert("Cannot connect to server. Please check your connection.");
+      setIsSubmitting(false);
     }
   };
 
-  //reset if non-bacoor
+  const handleCancel = () => {
+    // Save
+    saveDraft();
+
+    const draft = sessionStorage.getItem("enrollmentDraft");
+    let branch = selectedBranch;
+    let status = studentStatus;
+
+    if (draft) {
+      try {
+        const parsed = JSON.parse(draft);
+        branch = parsed.branch || selectedBranch;
+        status = parsed.status || studentStatus;
+      } catch (err) {
+        console.warn("Failed to parse draft", err);
+      }
+    }
+
+    console.log("Navigating back to step 1 with:", { branch, status });
+    window.location.href = `/enroll?from=information`;
+  };
+
+  const handleClearDraft = () => {
+    if (window.confirm("Are you sure you want to clear all form data?")) {
+      sessionStorage.removeItem("enrollmentDraft");
+      window.location.reload();
+    }
+  };
+
+  // Reset if non-bacoor
   useEffect(() => {
     if (program === "College" && selectedBranch.toLowerCase() !== "bacoor") {
       setProgram("Program");
@@ -333,12 +466,12 @@ function AdmissionInfo() {
     }
   }, [program, selectedBranch]);
 
-  // reset the second dropdown if the program selection changes
+  // Reset the second dropdown if the program selection changes
   useEffect(() => {
     setProgram1("Strand/Course");
   }, [program]);
 
-  //close dropdown menu when clicking outside
+  // Close dropdown menu when clicking outside (ALL YOUR ORIGINAL HANDLERS)
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -348,14 +481,9 @@ function AdmissionInfo() {
         setIsMenuOpen(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  //close second dropdown menu when clicking outside
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -366,14 +494,10 @@ function AdmissionInfo() {
         setIsMenuOpen1(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  //Religion Close
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -383,14 +507,10 @@ function AdmissionInfo() {
         setIsMenuOpenRel(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  //Civil Close
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -400,14 +520,9 @@ function AdmissionInfo() {
         setIsMenuOpenCS(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  //Nationality close
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -418,14 +533,9 @@ function AdmissionInfo() {
         setIsMenuOpenNat(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  // sex close
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -436,14 +546,13 @@ function AdmissionInfo() {
         setIsMenuOpenSex(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  //end of dropdown menu
+  if (isLoadingDraft) {
+    return <div className="container">Loading saved data...</div>;
+  }
 
   return (
     <div className="container">
@@ -458,56 +567,97 @@ function AdmissionInfo() {
             <p>
               Branch selected:{" "}
               <strong style={{ margin: "4px", color: "#1A3D5C" }}>
-                {" "}
                 {selectedBranch || "—"}
               </strong>
               <br />
             </p>
-            <p>Please fill in all the required fields.</p>
+            <p>Please fill in all the required fields. </p>
           </div>
 
           <form action="" className="pinfo">
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="fname">First Name</label>
-                <input type="text" id="fname" name="fname" required />
+                <label htmlFor="fname">
+                  First Name <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  id="fname"
+                  name="fname"
+                  required
+                  value={fname}
+                  onChange={handleInputChange}
+                />
               </div>
 
               <div className="form-group">
-                <label htmlFor="lname">Last Name</label>
-                <input type="text" id="lname" name="lname" required />
+                <label htmlFor="lname">
+                  Last Name <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  id="lname"
+                  name="lname"
+                  required
+                  value={lname}
+                  onChange={handleInputChange}
+                />
               </div>
 
               <div className="form-group">
                 <label htmlFor="mname">Middle Name</label>
-                <input type="text" id="mname" name="mname" required />
+                <input
+                  type="text"
+                  id="mname"
+                  name="mname"
+                  value={mname}
+                  onChange={handleInputChange}
+                />
               </div>
 
               <div className="form-group">
                 <label htmlFor="suffix">Suffix</label>
-                <input type="text" id="suffix" name="suffix" />
+                <input
+                  type="text"
+                  id="suffix"
+                  name="suffix"
+                  value={suffix}
+                  onChange={handleInputChange}
+                />
               </div>
             </div>
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="birthday">Birthday</label>
+                <label htmlFor="birthday">
+                  Birthday <span style={{ color: "red" }}>*</span>
+                </label>
                 <input
-                  type="text"
+                  type="date"
                   id="birthday"
                   name="birthday"
-                  placeholder="MM/DD/YYYY"
                   required
+                  value={birthday}
+                  onChange={handleInputChange}
+                  max={new Date().toISOString().split("T")[0]}
                 />
               </div>
 
               <div className="form-group">
                 <label htmlFor="pofb">Place of Birth</label>
-                <input type="text" id="pofb" name="pofb" />
+                <input
+                  type="text"
+                  id="pofb"
+                  name="pofb"
+                  value={pofb}
+                  onChange={handleInputChange}
+                />
               </div>
 
               <div className="dropdown" ref={wrapperRefSex}>
-                <label>Sex</label>
+                <label>
+                  Sex <span style={{ color: "red" }}>*</span>
+                </label>
                 <div
                   className="select"
                   onClick={() => setIsMenuOpenSex((p) => !p)}
@@ -535,7 +685,9 @@ function AdmissionInfo() {
 
             <div className="form-row">
               <div className="dropdown" ref={wrapperRefRel}>
-                <label>Religion</label>
+                <label>
+                  Religion <span style={{ color: "red" }}>*</span>
+                </label>
                 <div
                   className="select"
                   onClick={() => setIsMenuOpenRel((p) => !p)}
@@ -561,7 +713,9 @@ function AdmissionInfo() {
               </div>
 
               <div className="dropdown" ref={wrapperRefCS}>
-                <label>Civil Status</label>
+                <label>
+                  Civil Status <span style={{ color: "red" }}>*</span>
+                </label>
                 <div
                   className="select"
                   onClick={() => setIsMenuOpenCS((p) => !p)}
@@ -587,7 +741,9 @@ function AdmissionInfo() {
               </div>
 
               <div className="dropdown" ref={wrapperRefNat}>
-                <label>Nationality</label>
+                <label>
+                  Nationality <span style={{ color: "red" }}>*</span>
+                </label>
                 <div
                   className="select"
                   onClick={() => setIsMenuOpenNat((p) => !p)}
@@ -595,8 +751,8 @@ function AdmissionInfo() {
                   <span className="selected">{nationality}</span>
                   <div
                     className={`cart ${menuOpenNat ? "cart-rotate" : ""}`}
-                  ></div>{" "}
-                </div>{" "}
+                  ></div>
+                </div>
                 <ul className={`menu ${menuOpenNat ? "show" : ""}`}>
                   {nationalityOptions.map((opt) => (
                     <li
@@ -615,7 +771,9 @@ function AdmissionInfo() {
 
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="address">Address</label>
+                <label htmlFor="address">
+                  Address <span style={{ color: "red" }}>*</span>
+                </label>
                 <input
                   className="address-input"
                   type="text"
@@ -623,57 +781,96 @@ function AdmissionInfo() {
                   name="address"
                   placeholder="Street Address, City, Province, ZIP Code"
                   required
+                  value={address}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
+
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="email">
+                  Email <span style={{ color: "red" }}>*</span>
+                </label>
                 <input
-                  type="text"
+                  type="email"
                   id="email"
                   name="email"
                   placeholder="example@email.com"
                   required
+                  value={email}
+                  onChange={handleInputChange}
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="contact">Contact</label>
+                <label htmlFor="contact">
+                  Contact <span style={{ color: "red" }}>*</span>
+                </label>
                 <input
-                  type="text"
+                  type="tel"
                   id="contact"
                   name="contact"
                   placeholder="(63+)"
                   required
+                  value={contact}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
+
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="lastSchool">Last School Attended</label>
-                <input type="text" id="lastSchool" name="lastSchool" required />
+                <label htmlFor="lastSchool">
+                  Last School Attended <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  id="lastSchool"
+                  name="lastSchool"
+                  required
+                  value={lastSchool}
+                  onChange={handleInputChange}
+                />
               </div>
 
               <div className="form-group">
-                <label htmlFor="yearCompletion">Year Completion</label>
+                <label htmlFor="yearCompletion">
+                  Year Completion <span style={{ color: "red" }}>*</span>
+                </label>
                 <input
                   type="text"
                   id="yearCompletion"
                   name="yearCompletion"
+                  placeholder="YYYY"
                   required
+                  value={yearCompletion}
+                  onChange={handleInputChange}
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="lrn">LRN (Learner Reference Number)</label>
-                <input type="text" id="lrn" name="lrn" required />
+                <label htmlFor="lrn">
+                  LRN <span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  id="lrn"
+                  name="lrn"
+                  placeholder="12-digit number"
+                  required
+                  value={lrn}
+                  onChange={handleInputChange}
+                  maxLength={12}
+                />
               </div>
             </div>
 
             <div className="form-row dropdown-row">
               <div className="dropdown" ref={wrapperRef}>
-                <label>Program selection</label>
+                <label>
+                  Program selection <span style={{ color: "red" }}>*</span>
+                </label>
                 <div
                   className="select"
                   onClick={() => setIsMenuOpen((p) => !p)}
@@ -705,7 +902,10 @@ function AdmissionInfo() {
               </div>
 
               <div className="dropdown" ref={wrapperRef1}>
-                <label>Strand / Course selection</label>
+                <label>
+                  Strand / Course selection{" "}
+                  <span style={{ color: "red" }}>*</span>
+                </label>
                 <div
                   className="select"
                   onClick={() => setIsMenuOpen1((p) => !p)}
@@ -722,6 +922,7 @@ function AdmissionInfo() {
                       onClick={() => {
                         setProgram1(opt);
                         setIsMenuOpen1(false);
+                        saveDraft();
                       }}
                     >
                       {opt}
@@ -733,6 +934,7 @@ function AdmissionInfo() {
 
             <div className="choices3">
               <button
+                type="button"
                 className="btn3"
                 onClick={handleCancel}
                 disabled={isSubmitting}
@@ -742,7 +944,7 @@ function AdmissionInfo() {
               <button
                 type="button"
                 className={`btn4 ${!isFormValid() || isSubmitting ? "disabled" : ""}`}
-                onClick={handleContinue1}
+                onClick={handleContinue}
                 disabled={!isFormValid() || isSubmitting}
               >
                 {isSubmitting ? "Saving..." : "Continue"}

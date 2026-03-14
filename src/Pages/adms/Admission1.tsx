@@ -2,7 +2,13 @@ import "../../App.css";
 import { useState, useRef, useEffect } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import Progress from "../../components/Progress";
-import { v4 as uuidv4 } from "uuid";
+
+// Define this once at the top
+function generateAICSTrackingNumber() {
+  const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, ""); // YYYYMMDD
+  const randomPart = Math.random().toString(36).substring(2, 8).toUpperCase(); // 6 chars
+  return `AICS-${datePart}-${randomPart}`;
+}
 
 function Admission1() {
   const [selectedBranch, setSelectedBranch] = useState<string>("");
@@ -11,6 +17,10 @@ function Admission1() {
   const wrapperRefStatus = useRef<HTMLDivElement>(null);
 
   const [loading, setLoading] = useState(false);
+
+  // Check if returning from information page
+  const fromInfo =
+    new URLSearchParams(window.location.search).get("from") === "info";
 
   const branchRules: Record<string, string[]> = {
     "Junior High Completer": ["bacoor", "taytay", "GMA"],
@@ -33,34 +43,102 @@ function Admission1() {
 
     setLoading(true);
 
-    const fakeTrackingNumber = `TRK-${uuidv4().slice(0, 8).toUpperCase()}`;
+    // Check if we have existing draft data from Info page
+    const existingDraft = sessionStorage.getItem("enrollmentDraft");
+    let draftData;
 
-    sessionStorage.setItem(
-      "enrollmentDraft",
-      JSON.stringify({
-        trackingNumber: fakeTrackingNumber,
+    if (existingDraft) {
+      try {
+        const parsed = JSON.parse(existingDraft);
+
+        // Use existing tracking number or generate new AICS format one
+        const trackingNum =
+          parsed.trackingNumber || generateAICSTrackingNumber();
+
+        draftData = {
+          ...parsed, // This preserves all the info page data if it exists
+          trackingNumber: trackingNum,
+          branch: selectedBranch,
+          status: status,
+          step: 1,
+          lastUpdated: new Date().toISOString(),
+        };
+      } catch (err) {
+        console.warn("Failed to parse existing draft", err);
+        // Create new draft with AICS tracking number
+        draftData = {
+          trackingNumber: generateAICSTrackingNumber(),
+          branch: selectedBranch,
+          status: status,
+          step: 1,
+          createdAt: new Date().toISOString(),
+        };
+      }
+    } else {
+      // Create new draft with AICS tracking number
+      draftData = {
+        trackingNumber: generateAICSTrackingNumber(),
         branch: selectedBranch,
         status: status,
         step: 1,
         createdAt: new Date().toISOString(),
-      }),
+      };
+    }
+
+    sessionStorage.setItem("enrollmentDraft", JSON.stringify(draftData));
+    console.log(
+      "Saved to draft with tracking number:",
+      draftData.trackingNumber,
     );
 
     setTimeout(() => {
       setLoading(false);
-
-      window.location.href = `/information?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(status)}`;
+      window.location.href = `/information?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(status)}&trackingNumber=${draftData.trackingNumber}`;
     }, 600);
   };
 
+  const handleCancel = () => {
+    window.location.href = "/admission";
+  };
+
+  // Load saved data on component mount
   useEffect(() => {
     const saved = sessionStorage.getItem("enrollmentDraft");
     if (saved) {
-      const draft = JSON.parse(saved);
-      setStatus(draft.status || "Select Status");
-      setSelectedBranch(draft.branch || "");
+      try {
+        const draft = JSON.parse(saved);
+        console.log("Loading saved draft in Step 1:", draft);
+
+        // Restore status and branch if they exist
+        if (draft.status) {
+          setStatus(draft.status);
+        }
+        if (draft.branch) {
+          setSelectedBranch(draft.branch);
+        }
+      } catch (err) {
+        console.warn("Failed to parse draft", err);
+      }
     }
   }, []);
+
+  // When returning from info, make sure we have the latest data
+  useEffect(() => {
+    if (fromInfo) {
+      console.log("Returning from information page, reloading data...");
+      const saved = sessionStorage.getItem("enrollmentDraft");
+      if (saved) {
+        try {
+          const draft = JSON.parse(saved);
+          console.log("Reloading data from draft on return:", draft);
+          if (draft.status) setStatus(draft.status);
+          if (draft.branch) setSelectedBranch(draft.branch);
+        } catch (err) {
+          console.warn("Failed to parse draft", err);
+        }
+      }
+    }
+  }, [fromInfo]);
 
   const statusOptions = [
     "Junior High Completer",
@@ -92,6 +170,22 @@ function Admission1() {
 
       <div className="mcontainer">
         <div className="header">
+          {fromInfo && (
+            <div
+              style={{
+                backgroundColor: "#e8f4fd",
+                padding: "10px",
+                borderRadius: "5px",
+                marginBottom: "15px",
+                fontSize: "14px",
+                color: "#1A3D5C",
+              }}
+            >
+              ✓ Returning from information page. Your selection has been
+              restored.
+            </div>
+          )}
+
           <div className="dropdownb" ref={wrapperRefStatus}>
             <label>Student Status</label>
             <div
@@ -110,7 +204,19 @@ function Admission1() {
                   onClick={() => {
                     setStatus(opt);
                     setIsMenuOpenStatus(false);
-                    setSelectedBranch("");
+                    setSelectedBranch(""); // Reset branch when status changes
+
+                    // Update draft
+                    const draft = sessionStorage.getItem("enrollmentDraft");
+                    if (draft) {
+                      const parsed = JSON.parse(draft);
+                      parsed.status = opt;
+                      parsed.branch = "";
+                      sessionStorage.setItem(
+                        "enrollmentDraft",
+                        JSON.stringify(parsed),
+                      );
+                    }
                   }}
                 >
                   {opt}
@@ -132,9 +238,22 @@ function Admission1() {
               className={`choices ${
                 selectedBranch === branchName ? "selected" : ""
               } ${isBranchDisabled(branchName) ? "disabled-branch" : ""}`}
-              onClick={() =>
-                !isBranchDisabled(branchName) && setSelectedBranch(branchName)
-              }
+              onClick={() => {
+                if (!isBranchDisabled(branchName)) {
+                  setSelectedBranch(branchName);
+
+                  // Update draft
+                  const draft = sessionStorage.getItem("enrollmentDraft");
+                  if (draft) {
+                    const parsed = JSON.parse(draft);
+                    parsed.branch = branchName;
+                    sessionStorage.setItem(
+                      "enrollmentDraft",
+                      JSON.stringify(parsed),
+                    );
+                  }
+                }
+              }}
             >
               <span className="circle1">
                 <FaLocationDot />
@@ -152,11 +271,7 @@ function Admission1() {
           ))}
 
           <div className="choices2">
-            <button
-              className="btn1"
-              onClick={() => (window.location.href = "/admission")}
-              disabled={loading}
-            >
+            <button className="btn1" onClick={handleCancel} disabled={loading}>
               Cancel
             </button>
 

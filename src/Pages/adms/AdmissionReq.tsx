@@ -2,7 +2,7 @@ import { MdOutlineDriveFolderUpload } from "react-icons/md";
 import { FaCircleExclamation } from "react-icons/fa6";
 import "../../App.css";
 import Progress from "../../components/Progress";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 function getQueryParam(name: string): string | null {
   const params = new URLSearchParams(window.location.search);
@@ -20,10 +20,31 @@ function chunkArray(arr: string[], size: number) {
 function AdmissionReq() {
   const selectedBranch = getQueryParam("branch") || "";
   const studentStatus = getQueryParam("status") || "";
-
   const trackingNumber = getQueryParam("trackingNumber") || "";
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<Record<string, string>>(
+    {},
+  );
+
+  // Load and verify draft data on component mount
+  useEffect(() => {
+    const draft = sessionStorage.getItem("enrollmentDraft");
+    if (draft) {
+      try {
+        const parsedDraft = JSON.parse(draft);
+        console.log("Draft loaded in requirements page:", {
+          fname: parsedDraft.fname,
+          lname: parsedDraft.lname,
+          program: parsedDraft.program,
+          strand: parsedDraft.strand_or_course,
+          trackingNumber: parsedDraft.trackingNumber,
+        });
+      } catch (err) {
+        console.warn("Failed to parse draft", err);
+      }
+    }
+  }, []);
 
   // Requirements
   const requirements: Record<string, string[]> = {
@@ -59,17 +80,68 @@ function AdmissionReq() {
     ],
   };
 
-  const groupedRequirements = chunkArray(requirements[studentStatus] || [], 2);
+  const currentRequirements = requirements[studentStatus] || [];
+  const groupedRequirements = chunkArray(currentRequirements, 2);
 
-  // Submit handler
+  // Handle file selection
+  const handleFileChange = (
+    req: string,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedFiles((prev) => ({
+        ...prev,
+        [req]: file.name,
+      }));
+    }
+  };
+
+  // Function to continue without uploading
+  const handleContinueWithoutUpload = () => {
+    // Update draft to mark step 3 as completed without uploads
+    const existing = sessionStorage.getItem("enrollmentDraft");
+    if (existing) {
+      const draft = JSON.parse(existing);
+      const updated = {
+        ...draft,
+        step: 3,
+        requirementsSkipped: true,
+        timestamp: draft.timestamp || new Date().toISOString(),
+      };
+      sessionStorage.setItem("enrollmentDraft", JSON.stringify(updated));
+    }
+
+    // Navigate to confirmation page
+    window.location.href = `/confirmation?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}`;
+  };
+
+  // Submit handler (for when files are actually uploaded)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if any files are selected
+    const hasFiles = currentRequirements.some((req) => {
+      const input = document.getElementById(
+        req.replace(/\s+/g, "").toLowerCase(),
+      ) as HTMLInputElement;
+      return input?.files?.[0] != null;
+    });
+
+    // If no files, just continue without uploading
+    if (!hasFiles) {
+      handleContinueWithoutUpload();
+      return;
+    }
+
+    // Otherwise, proceed with upload
     setIsSubmitting(true);
 
     const formData = new FormData();
     formData.append("trackingNumber", trackingNumber);
 
-    groupedRequirements.flat().forEach((req) => {
+    // Append files that were selected
+    currentRequirements.forEach((req) => {
       const input = document.getElementById(
         req.replace(/\s+/g, "").toLowerCase(),
       ) as HTMLInputElement;
@@ -85,39 +157,90 @@ function AdmissionReq() {
       });
 
       if (!response.ok) {
-        alert("Upload failed");
-        setIsSubmitting(false);
+        alert("Upload failed. You can continue without uploading for now.");
+        // Still allow continuing even if upload fails
+        handleContinueWithoutUpload();
         return;
       }
 
       const data = await response.json();
       console.log("Uploaded:", data);
 
-      window.location.href = `/confirmation?branch=${selectedBranch}&status=${studentStatus}&trackingNumber=${trackingNumber}`;
+      // Update draft to mark step 3 as completed
+      const existing = sessionStorage.getItem("enrollmentDraft");
+      if (existing) {
+        const draft = JSON.parse(existing);
+        const updated = {
+          ...draft,
+          step: 3,
+          requirementsUploaded: true,
+          timestamp: draft.timestamp || new Date().toISOString(),
+        };
+        sessionStorage.setItem("enrollmentDraft", JSON.stringify(updated));
+      }
+
+      window.location.href = `/confirmation?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}`;
     } catch (err) {
       console.error(err);
-      alert("Server error while uploading requirements.");
-      setIsSubmitting(false);
+      alert("Server error. Continuing without upload...");
+      handleContinueWithoutUpload();
     }
   };
 
   const handleCancel = () => {
-    sessionStorage.setItem(
-      "enrollmentDraft",
-      JSON.stringify({
-        branch: selectedBranch,
-        status: studentStatus,
-        step: 3, // mark that you're at requirements step
-        // you can also add any other fields you want to preserve here
-      }),
+    // Get existing draft - this contains all the data from step 2
+    const existing = sessionStorage.getItem("enrollmentDraft");
+    let draft = existing ? JSON.parse(existing) : {};
+
+    console.log("Preserving draft data on cancel:", {
+      fname: draft.fname,
+      lname: draft.lname,
+      program: draft.program,
+      strand: draft.strand_or_course,
+    });
+
+    // Make sure we preserve ALL data when navigating back
+    const updatedDraft = {
+      ...draft, // This preserves everything from step 2
+      step: 2, // Go back to step 2
+      lastVisited: new Date().toISOString(),
+      branch: selectedBranch,
+      status: studentStatus,
+      trackingNumber: trackingNumber || draft.trackingNumber,
+    };
+
+    sessionStorage.setItem("enrollmentDraft", JSON.stringify(updatedDraft));
+
+    // Navigate back to information page
+    window.location.href = `/information?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber || draft.trackingNumber}&from=requirements`;
+  };
+
+  // If no requirements for this status
+  if (currentRequirements.length === 0) {
+    return (
+      <div className="container">
+        <div className="container1">
+          <Progress current={3} />
+        </div>
+        <div className="mcontainer mcnt">
+          <div className="header2">
+            <div className="syb">
+              Upload Requirements
+              <p>No requirements found for {studentStatus} status.</p>
+            </div>
+            <div className="choices2">
+              <button className="btn5" onClick={handleCancel}>
+                Cancel
+              </button>
+              <button className="btn6" onClick={handleContinueWithoutUpload}>
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     );
-
-    window.location.href = `/information?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}`;
-  };
-
-  const handleContinue = () => {
-    window.location.href = `/confirmation?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}`;
-  };
+  }
 
   return (
     <div className="container">
@@ -132,29 +255,40 @@ function AdmissionReq() {
             <p>Upload the necessary documents to complete your application.</p>
           </div>
 
-          <form className="Upload-form">
+          <form className="Upload-form" onSubmit={handleSubmit}>
             {groupedRequirements.map((row, rowIndex) => (
               <div className="upload-row" key={rowIndex}>
-                {row.map((req, index) => (
-                  <div className="upload-group" key={index}>
-                    <label htmlFor={req.replace(/\s+/g, "").toLowerCase()}>
-                      {req}
-                    </label>
-                    <label className="file-wrapper">
-                      <span className="upload-text">Click to upload {req}</span>
-                      <div className="cont-icon">
-                        <MdOutlineDriveFolderUpload className="icon" />
-                      </div>
-                      <input
-                        className="file-input"
-                        type="file"
-                        id={req.replace(/\s+/g, "").toLowerCase()}
-                        name={req.replace(/\s+/g, "").toLowerCase()}
-                        required
-                      />
-                    </label>
-                  </div>
-                ))}
+                {row.map((req, index) => {
+                  const inputId = req.replace(/\s+/g, "").toLowerCase();
+                  return (
+                    <div className="upload-group" key={index}>
+                      <label htmlFor={inputId}>
+                        {req}{" "}
+                        <span
+                          style={{ color: "#666", fontSize: "12px" }}
+                        ></span>
+                      </label>
+                      <label className="file-wrapper">
+                        <span className="upload-text">
+                          {uploadedFiles[req]
+                            ? `📎 ${uploadedFiles[req]}`
+                            : `Click to upload ${req} (optional)`}
+                        </span>
+                        <div className="cont-icon">
+                          <MdOutlineDriveFolderUpload className="icon" />
+                        </div>
+                        <input
+                          className="file-input"
+                          type="file"
+                          id={inputId}
+                          name={inputId}
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          onChange={(e) => handleFileChange(req, e)}
+                        />
+                      </label>
+                    </div>
+                  );
+                })}
               </div>
             ))}
 
@@ -176,8 +310,16 @@ function AdmissionReq() {
               </p>
             </div>
 
-            <div className="choices2">
+            <div
+              className="choices2 reqcho"
+              style={{
+                display: "flex",
+                gap: "10px",
+                justifyContent: "flex-end",
+              }}
+            >
               <button
+                type="button"
                 className="btn5"
                 onClick={handleCancel}
                 disabled={isSubmitting}
@@ -185,11 +327,16 @@ function AdmissionReq() {
                 Cancel
               </button>
               <button
+                type="button"
                 className="btn6"
-                onClick={handleContinue}
+                onClick={handleContinueWithoutUpload}
                 disabled={isSubmitting}
+                style={{ backgroundColor: "#1A3D5C" }}
               >
-                Continue
+                Continue without uploading
+              </button>
+              <button type="submit" className="btn6" disabled={isSubmitting}>
+                {isSubmitting ? "Uploading..." : "Upload & Continue"}
               </button>
             </div>
           </form>
