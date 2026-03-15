@@ -7,6 +7,7 @@ import AdmissionConf from "./Pages/adms/AdmissionConf.tsx";
 import AdmissionEnt from "./Pages/adms/AdmissionEnt.tsx";
 import LoginReg from "./Pages/stdnt/LoginReg.tsx";
 import Reglog from "./Pages/stdnt/Reglog.tsx";
+import SHome from "./Pages/stdnt/SHome.tsx";
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
           <Route path="login" element={<LoginReg />} />
           <Route index element={<Reglog />} />
           <Route path="Registration" element={<Reglog />} />
+          <Route index element={<SHome />} />
+          <Route path="StudentHome" element={<SHome />} />
         </Routes>
       </BrowserRouter>
     </div>
