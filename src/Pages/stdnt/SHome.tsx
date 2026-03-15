@@ -142,7 +142,7 @@ function SHome() {
             </li>
             <li>
               <a href="#">
-                <IoBookSharp /> Subjects
+                <IoBookSharp /> Current Subjects
               </a>
             </li>
             <li>
