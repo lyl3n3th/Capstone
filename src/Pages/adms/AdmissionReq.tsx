@@ -21,6 +21,8 @@ function AdmissionReq() {
   const selectedBranch = getQueryParam("branch") || "";
   const studentStatus = getQueryParam("status") || "";
   const trackingNumber = getQueryParam("trackingNumber") || "";
+  // Add program from URL params
+  const program = getQueryParam("program") || "";
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, string>>(
@@ -112,8 +114,8 @@ function AdmissionReq() {
       sessionStorage.setItem("enrollmentDraft", JSON.stringify(updated));
     }
 
-    // Navigate to confirmation page
-    window.location.href = `/confirmation?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}`;
+    // Navigate to confirmation page WITH program parameter
+    window.location.href = `/confirmation?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}&program=${encodeURIComponent(program)}`;
   };
 
   // Submit handler (for when files are actually uploaded)
@@ -179,7 +181,8 @@ function AdmissionReq() {
         sessionStorage.setItem("enrollmentDraft", JSON.stringify(updated));
       }
 
-      window.location.href = `/confirmation?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}`;
+      // Navigate to confirmation page WITH program parameter
+      window.location.href = `/confirmation?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}&program=${encodeURIComponent(program)}`;
     } catch (err) {
       console.error(err);
       alert("Server error. Continuing without upload...");
@@ -211,8 +214,8 @@ function AdmissionReq() {
 
     sessionStorage.setItem("enrollmentDraft", JSON.stringify(updatedDraft));
 
-    // Navigate back to information page
-    window.location.href = `/information?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber || draft.trackingNumber}&from=requirements`;
+    // Navigate back to information page WITH program parameter
+    window.location.href = `/information?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber || draft.trackingNumber}&program=${encodeURIComponent(program)}&from=requirements`;
   };
 
   // If no requirements for this status
@@ -253,6 +256,14 @@ function AdmissionReq() {
           <div className="syb">
             Upload Requirements
             <p>Upload the necessary documents to complete your application.</p>
+            {/* Optional: Show program info */}
+            {program && (
+              <p
+                style={{ fontSize: "14px", color: "#1A3D5C", marginTop: "5px" }}
+              >
+                Program: <strong>{program}</strong>
+              </p>
+            )}
           </div>
 
           <form className="Upload-form" onSubmit={handleSubmit}>

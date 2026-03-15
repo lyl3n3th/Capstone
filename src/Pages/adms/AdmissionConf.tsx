@@ -19,6 +19,7 @@ function AdmissionConf() {
   const selectedBranch = getQueryParam("branch") || "";
   const studentStatus = getQueryParam("status") || "";
   const urlTrackingNumber = getQueryParam("trackingNumber") || "";
+  const program = getQueryParam("program") || "";
 
   const [trackingNumber, setTrackingNumber] = useState("");
   const [applicationData, setApplicationData] = useState<any>(null);
@@ -95,7 +96,7 @@ function AdmissionConf() {
       }
     }
 
-    window.location.href = `/requirements?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}`;
+    window.location.href = `/requirements?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}&program=${encodeURIComponent(program)}`;
   };
 
   const handleContinue = () => {
@@ -112,7 +113,17 @@ function AdmissionConf() {
       }
     }
 
-    window.location.href = "/EntranceExam";
+    // Get the program from either URL param or application data
+    const programValue = program || applicationData?.program || "";
+    const isCollege = programValue === "College";
+
+    if (isCollege) {
+      // College applicants go to entrance exam
+      window.location.href = `/entranceexam?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}&program=${encodeURIComponent(programValue)}`;
+    } else {
+      // Senior High School applicants are done - go to home
+      window.location.href = `/`;
+    }
   };
 
   // Format date for display
@@ -124,6 +135,11 @@ function AdmissionConf() {
       day: "numeric",
     });
   };
+
+  // Determine if college or senior high
+  const programValue = program || applicationData?.program || "";
+  const isCollege = programValue === "College";
+  const buttonText = isCollege ? "Continue to Entrance Exam" : "Go to Home";
 
   return (
     <div className="container">
@@ -160,34 +176,75 @@ function AdmissionConf() {
             </button>
           </div>
 
-          {/* Application Summary Section - Using divs instead of p tags to avoid nesting issues */}
+          {/* Conditional Message based on program */}
+          {isCollege && (
+            <div
+              style={{
+                backgroundColor: "#fff3cd",
+                padding: "12px 15px",
+                borderRadius: "5px",
+                marginTop: "15px",
+                border: "1px solid #ffeeba",
+                color: "#856404",
+                fontSize: "12px",
+              }}
+            >
+              <strong>Next Step:</strong> Since you're applying for a College
+              program, you need to take an entrance exam. Click "Continue to
+              Entrance Exam" to schedule your exam.
+            </div>
+          )}
+
+          {!isCollege && programValue && (
+            <div
+              style={{
+                backgroundColor: "#d4edda",
+                padding: "12px 15px",
+                borderRadius: "5px",
+                marginTop: "15px",
+                border: "1px solid #c3e6cb",
+                color: "#155724",
+                fontSize: "12px",
+              }}
+            >
+              <strong>Application Complete:</strong> Your Senior High School
+              application has been submitted. You may now go back to home.
+            </div>
+          )}
+
+          {/* Application Summary Section - Preserving your original styling */}
           {applicationData && (
             <div
               style={{
                 backgroundColor: "#f5f5f5",
                 padding: "15px",
                 borderRadius: "8px",
-                marginTop: "10px",
+                marginTop: "15px",
                 fontSize: "14px",
                 border: "1px solid #ddd",
               }}
             >
-              <p style={{ fontWeight: "bold", marginBottom: "8px" }}>
+              <p
+                style={{
+                  fontWeight: "bold",
+                  marginBottom: "8px",
+                  fontSize: "14px",
+                }}
+              >
                 Application Summary:
               </p>
 
-              {/* Using div for each line to avoid nested p tags */}
               <div
-                style={{ marginBottom: "4px", fontSize: "12px", color: "#666" }}
+                style={{ marginBottom: "4px", fontSize: "13px", color: "#333" }}
               >
-                Branch:{" "}
+                <strong>Branch:</strong>{" "}
                 {applicationData.branch || selectedBranch || "Not selected"}
               </div>
 
               <div
-                style={{ marginBottom: "4px", fontSize: "12px", color: "#666" }}
+                style={{ marginBottom: "4px", fontSize: "13px", color: "#333" }}
               >
-                Status:{" "}
+                <strong>Status:</strong>{" "}
                 {applicationData.status || studentStatus || "Not selected"}
               </div>
 
@@ -195,11 +252,11 @@ function AdmissionConf() {
                 <div
                   style={{
                     marginBottom: "4px",
-                    fontSize: "12px",
-                    color: "#666",
+                    fontSize: "13px",
+                    color: "#333",
                   }}
                 >
-                  Program:{applicationData.program}
+                  <strong>Program:</strong> {applicationData.program}
                 </div>
               )}
 
@@ -207,11 +264,12 @@ function AdmissionConf() {
                 <div
                   style={{
                     marginBottom: "4px",
-                    fontSize: "12px",
-                    color: "#666",
+                    fontSize: "13px",
+                    color: "#333",
                   }}
                 >
-                  Course/Strand: {applicationData.strand_or_course}
+                  <strong>Course/Strand:</strong>{" "}
+                  {applicationData.strand_or_course}
                 </div>
               )}
 
@@ -219,11 +277,11 @@ function AdmissionConf() {
                 <div
                   style={{
                     marginBottom: "4px",
-                    fontSize: "12px",
-                    color: "#666",
+                    fontSize: "13px",
+                    color: "#333",
                   }}
                 >
-                  Name: {applicationData.fname || ""}{" "}
+                  <strong>Name:</strong> {applicationData.fname || ""}{" "}
                   {applicationData.lname || ""}
                 </div>
               )}
@@ -231,7 +289,7 @@ function AdmissionConf() {
               <div
                 style={{ fontSize: "12px", color: "#666", marginTop: "8px" }}
               >
-                Submitted:{" "}
+                <strong>Submitted:</strong>{" "}
                 {formatDate(
                   applicationData.submissionDate || new Date().toISOString(),
                 )}
@@ -239,7 +297,7 @@ function AdmissionConf() {
             </div>
           )}
 
-          {/* Important Notes Section */}
+          {/* Important Notes Section - Your original styling */}
           <div className="choices-note1">
             <div className="note-header1">
               <FaCircleExclamation className="exclamation-icon1" />
@@ -251,19 +309,19 @@ function AdmissionConf() {
               application has been reviewed.
             </p>
             <p className="notice-text1">
-              You may use your tracking number&nbsp;
-              <strong>{trackingNumber}</strong>&nbsp;to check the status of your
+              You may use your tracking number
+              <strong>{trackingNumber}</strong>to check the status of your
               application after submission.
             </p>
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons - Your original styling with confcho class */}
           <div className="choices2 confcho">
             <button className="btn5" onClick={handleBackToRequirements}>
               Back
             </button>
             <button className="btn6" onClick={handleContinue}>
-              Continue to Entrance Exam
+              {buttonText}
             </button>
           </div>
         </div>

@@ -421,7 +421,7 @@ function AdmissionInfo() {
         console.log("Draft saved before navigation:", updatedDraft);
       }
 
-      window.location.href = `/requirements?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${data.tracking_number || trackingNumber}`;
+      window.location.href = `/requirements?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${data.tracking_number || trackingNumber}&program=${encodeURIComponent(program)}`;
     } catch (err) {
       console.error(err);
       alert("Cannot connect to server. Please check your connection.");
@@ -471,7 +471,7 @@ function AdmissionInfo() {
     setProgram1("Strand/Course");
   }, [program]);
 
-  // Close dropdown menu when clicking outside (ALL YOUR ORIGINAL HANDLERS)
+  // Close dropdown menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
