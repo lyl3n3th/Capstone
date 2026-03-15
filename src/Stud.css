@@ -627,14 +627,18 @@
   left: 0;
   top: 0;
   bottom: 0;
-  overflow-y: auto;
+  height: 100vh; /* Ensure full height */
+  overflow-y: hidden; /* Change from auto to hidden */
   transition: all 0.3s ease;
   box-shadow: 2px 0 10px rgba(0,0,0,0.1);
 }
 
+
+
 .s-sidebar-header {
   padding: 32px 24px;
   border-bottom: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0; /* Prevent header from shrinking */
 }
 
 .s-school-name {
@@ -651,8 +655,9 @@
 }
 
 .s-sidebar-nav {
-  flex: 1;
-  padding: 30px 0;
+  flex: 1 1 auto; /* Allow nav to grow and shrink */
+  padding: 20px 0;
+  overflow-y: auto; /* Make only the nav area scrollable if needed */
 }
 
 .s-sidebar-nav ul {
@@ -693,11 +698,11 @@
   min-width: 24px;
 }
 
+
 .s-sidebar-footer {
-  padding: 24px;
+  padding: 20px 24px;
   border-top: 1px solid rgba(255,255,255,0.1);
-  font-size: 14px;
-  opacity: 0.7;
+  flex-shrink: 0; /* Prevent footer from shrinking */
 }
 
 /* ===== MAIN CONTENT AREA ===== */
@@ -706,6 +711,9 @@
   margin-left: 280px;
   min-height: 100vh;
   background: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
 /* ===== TOP HEADER ===== */
@@ -869,7 +877,9 @@
 
 /* ===== CONTENT AREA ===== */
 .s-content {
-  padding: 25px;
+  padding: 22px;
+  flex: 1; /* Take remaining space */
+  overflow-y: auto; /* Allow content to scroll if needed */
 }
 
 

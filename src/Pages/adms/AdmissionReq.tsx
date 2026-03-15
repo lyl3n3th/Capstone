@@ -257,13 +257,6 @@ function AdmissionReq() {
             Upload Requirements
             <p>Upload the necessary documents to complete your application.</p>
             {/* Optional: Show program info */}
-            {program && (
-              <p
-                style={{ fontSize: "14px", color: "#1A3D5C", marginTop: "5px" }}
-              >
-                Program: <strong>{program}</strong>
-              </p>
-            )}
           </div>
 
           <form className="Upload-form" onSubmit={handleSubmit}>
