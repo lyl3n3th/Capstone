@@ -110,7 +110,7 @@ function AdmissionEnt() {
               </p>
             )}
             <p style={{ fontSize: "12px", color: "#666" }}>
-              Program: <strong>{program}</strong> | Branch:{" "}
+              Program: <strong>{program}</strong>&nbsp; | &nbsp;Branch:{" "}
               <strong>{selectedBranch}</strong>
             </p>
           </div>

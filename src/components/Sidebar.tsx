@@ -1,18 +1,24 @@
-// components/student/Sidebar.tsx
 import { FaHome, FaGraduationCap } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
 import { BsCardList } from "react-icons/bs";
 import { IoBookSharp } from "react-icons/io5";
 import { MdOutlineNoteAlt } from "react-icons/md";
+import { FiLogOut } from "react-icons/fi";
 import "../Stud.css";
 
 interface SidebarProps {
   isOpen: boolean;
-  onClose?: () => void;
+  onClose: () => void;
   activePage?: string;
+  onLogout?: () => void;
 }
 
-function Sidebar({ isOpen, onClose, activePage = "home" }: SidebarProps) {
+function Sidebar({
+  isOpen,
+  onClose,
+  activePage = "home",
+  onLogout,
+}: SidebarProps) {
   const menuItems = [
     { id: "home", icon: <FaHome />, label: "Home", path: "/student/dashboard" },
     {
@@ -30,7 +36,7 @@ function Sidebar({ isOpen, onClose, activePage = "home" }: SidebarProps) {
     {
       id: "subjects",
       icon: <IoBookSharp />,
-      label: "Subjects",
+      label: "Current Subjects",
       path: "/student/subjects",
     },
     {
@@ -49,24 +55,29 @@ function Sidebar({ isOpen, onClose, activePage = "home" }: SidebarProps) {
 
   const handleItemClick = (path: string) => {
     window.location.href = path;
-    if (onClose) {
-      onClose();
+    onClose();
+  };
+
+  const handleLogoutClick = () => {
+    if (onLogout) {
+      onLogout();
     }
+    onClose();
   };
 
   return (
-    <div className={`portal-sidebar ${isOpen ? "open" : ""}`}>
-      <div className="sidebar-header">
-        <div className="school-name">Asian Institute of Computer Studies</div>
-        <div className="branch-name">Bacoor Branch</div>
+    <div className={`s-sidebar ${isOpen ? "s-open" : ""}`}>
+      <div className="s-sidebar-header">
+        <div className="s-school-name">Asian Institute of Computer Studies</div>
+        <div className="s-branch-name">Bacoor Branch</div>
       </div>
 
-      <nav className="sidebar-nav">
+      <nav className="s-sidebar-nav">
         <ul>
           {menuItems.map((item) => (
             <li
               key={item.id}
-              className={activePage === item.id ? "active" : ""}
+              className={activePage === item.id ? "s-active" : ""}
             >
               <a
                 href="#"
@@ -82,8 +93,10 @@ function Sidebar({ isOpen, onClose, activePage = "home" }: SidebarProps) {
         </ul>
       </nav>
 
-      <div className="sidebar-footer">
-        <p>© 2026 AICS</p>
+      <div className="s-sidebar-footer">
+        <button className="s-logout-btn" onClick={handleLogoutClick}>
+          <FiLogOut /> Logout
+        </button>
       </div>
     </div>
   );

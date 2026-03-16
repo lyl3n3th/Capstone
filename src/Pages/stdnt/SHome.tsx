@@ -2,14 +2,14 @@ import "../../Stud.css";
 import { BsCardList } from "react-icons/bs";
 import { IoBookSharp } from "react-icons/io5";
 import { FaGraduationCap } from "react-icons/fa";
-import { FaHome } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
 import { MdOutlineNoteAlt } from "react-icons/md";
-import { FiLogOut } from "react-icons/fi";
+import { FaCalendarAlt } from "react-icons/fa";
+import { MdFormatListBulleted } from "react-icons/md";
 import { useState, useEffect, useRef } from "react";
 import { IoMenu } from "react-icons/io5";
-import Sidebar from "../../components/Sidebar";
-import Header from "../../components/Header";
+import { IoDocumentText } from "react-icons/io5";
+import Sidebar from "../../components/Sidebar"; // Updated import path
 
 function SHome() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -56,10 +56,9 @@ function SHome() {
   }, [sidebarOpen]);
 
   const handleLogout = () => {
-    // Add your logout logic here
-    // Clear session, redirect to login, etc.
     console.log("Logging out...");
-    // Example: window.location.href = "/login";
+    // Add your logout logic here
+    // window.location.href = "/login";
   };
 
   const studentData = {
@@ -69,6 +68,8 @@ function SHome() {
     gpa: "1.75",
     enrolledSubjects: 8,
     enrollmentStatus: "Pending",
+    strand: "TVL - ICT",
+    email: "ayawkona@gmail.com",
   };
 
   // Get current date for display in header right
@@ -111,60 +112,13 @@ function SHome() {
 
   return (
     <div className="s-portal">
-      {/* Sidebar with ref for outside click detection */}
-      <div
-        className={`s-sidebar ${sidebarOpen ? "s-open" : ""}`}
-        ref={sidebarRef}
-      >
-        <div className="s-sidebar-header">
-          <div className="s-school-name">
-            Asian Institute of Computer Studies
-          </div>
-          <div className="s-branch-name">Bacoor Branch</div>
-        </div>
-
-        <nav className="s-sidebar-nav">
-          <ul>
-            <li className="s-active">
-              <a href="#">
-                <FaHome /> Home
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <IoPersonSharp /> Profile
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <BsCardList /> Grades
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <IoBookSharp /> Current Subjects
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <FaGraduationCap /> Enrollment
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <MdOutlineNoteAlt /> Evaluation
-              </a>
-            </li>
-          </ul>
-        </nav>
-
-        {/* Updated footer with logout button */}
-        <div className="s-sidebar-footer">
-          <button className="s-logout-btn" onClick={handleLogout}>
-            <FiLogOut /> Logout
-          </button>
-        </div>
-      </div>
+      {/* Sidebar Component */}
+      <Sidebar
+        isOpen={sidebarOpen}
+        onClose={handleSidebarClose}
+        activePage="home"
+        onLogout={handleLogout}
+      />
 
       {/* Overlay for mobile when sidebar is open */}
       {sidebarOpen && (
@@ -202,44 +156,68 @@ function SHome() {
           </div>
 
           <div className="s-dashboard-grid">
-            <div className="s-card">
-              <div className="s-card-header">
-                <BsCardList />
-                <h3>Current Grades</h3>
+            <div className="s-groupc">
+              <div className="s-card">
+                <div className="s-card-header">
+                  <div className="s-box-icon">
+                    <FaCalendarAlt />
+                  </div>
+                  <h3>Current Academic Year</h3>
+                </div>
+                <div className="s-card-value">2026 - 2027</div>
               </div>
-              <div className="s-card-value">{studentData.gpa}</div>
-              <div className="s-card-label">GWA - 1st Sem</div>
-              <a href="#" className="s-card-link">
-                View Grades →
-              </a>
+
+              <div className="s-card g2">
+                <div className="s-card-header">
+                  <div className="s-box-icon">
+                    <MdFormatListBulleted />
+                  </div>
+                  <h3>Current Semester</h3>
+                </div>
+                <div className="s-card-value">1st Semester</div>
+              </div>
+
+              <div className="s-card g2">
+                <div className="s-card-header">
+                  <div className="s-box-icon">
+                    <IoPersonSharp />
+                  </div>
+                  <h3>Current Status</h3>
+                </div>
+                <div className="s-card-value">Regular</div>
+              </div>
             </div>
 
             <div className="s-card">
-              <div className="s-card-header">
-                <IoBookSharp />
-                <h3>Enrolled Subjects</h3>
+              <div className="s-card-header1">
+                <h3>{studentData.name}</h3>
+                <span className="s-str-p">{studentData.strand}</span>
               </div>
-              <div className="s-card-value">{studentData.enrolledSubjects}</div>
-              <div className="s-card-label">Current Semester</div>
-              <a href="#" className="s-card-link">
-                View Subjects →
-              </a>
+              <div className="s-card-value1">Student Number:</div>
+              <div className="s-card-label1">{studentData.id}</div>
+              <div className="s-card-value1">Email:</div>
+              <div className="s-card-label1">{studentData.email}</div>
+              <div className="s-card-value1">Password:</div>
+              <div className="s-card-label1">************</div>
             </div>
 
             <div className="s-card">
-              <div className="s-card-header">
-                <FaGraduationCap />
-                <h3>Enrollment Status</h3>
+              <div className="s-card-header1">
+                <h3>News & Announcement</h3>
               </div>
-              <div className="s-card-value">{studentData.enrollmentStatus}</div>
-              <div className="s-card-label">For Approval</div>
-              <a href="#" className="s-card-link">
-                Check Status →
-              </a>
+              <div className="s-news-content">
+                <p>No new announcements</p>
+              </div>
             </div>
           </div>
 
-          <h2 className="s-section-title">Recent Activities</h2>
+          <div className="s-icon-ac">
+            <div className="s-co">
+              <IoDocumentText />
+            </div>
+            <h2 className="s-section-title">Credential Status</h2>
+          </div>
+
           <div className="s-activity-list">
             {recentActivities.map((activity) => (
               <div className="s-activity-item" key={activity.id}>
