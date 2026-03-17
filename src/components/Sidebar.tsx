@@ -4,6 +4,7 @@ import { BsCardList } from "react-icons/bs";
 import { IoBookSharp } from "react-icons/io5";
 import { MdOutlineNoteAlt } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import "../Stud.css";
 
 interface SidebarProps {
@@ -19,8 +20,15 @@ function Sidebar({
   activePage = "home",
   onLogout,
 }: SidebarProps) {
+  const navigate = useNavigate();
+
   const menuItems = [
-    { id: "home", icon: <FaHome />, label: "Home", path: "/student/dashboard" },
+    {
+      id: "home",
+      icon: <FaHome />,
+      label: "Home",
+      path: "/student/home",
+    },
     {
       id: "profile",
       icon: <IoPersonSharp />,
@@ -54,14 +62,21 @@ function Sidebar({
   ];
 
   const handleItemClick = (path: string) => {
-    window.location.href = path;
+    navigate(path);
     onClose();
   };
 
   const handleLogoutClick = () => {
+    // Clear any stored user data
+    sessionStorage.removeItem("studentSession");
+    localStorage.removeItem("studentData");
+
     if (onLogout) {
       onLogout();
     }
+
+    // Navigate to login page
+    navigate("/login");
     onClose();
   };
 

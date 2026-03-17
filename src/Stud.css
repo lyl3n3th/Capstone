@@ -609,6 +609,14 @@
 /* ===== STUDENT PORTAL STYLES ===== */
 /* All classes start with 's-' to avoid conflicts with admission CSS */
 
+.s-portal,
+.s-portal * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 /* ===== MAIN LAYOUT ===== */
 .s-portal {
   display: flex;
@@ -882,9 +890,6 @@
 }
 
 
-
-
-
 /* ===== WELCOME BANNER ===== */
 .s-welcome-banner {
   background: #ffffff;
@@ -997,7 +1002,7 @@
 }
 
 .s-card-value {
-  font-size: 32px;
+  font-size: 26px;
   font-weight: 600;
   color: #1A3D5C;
   margin-bottom: 4px;
@@ -1039,29 +1044,71 @@
 
 /* ===== RECENT ACTIVITY SECTION ===== */
 
+.s-credential-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
 .s-icon-ac {
   display: flex;
-  align-items: center;   /* vertical alignment */
-  gap: 10px;             /* spacing between icon and text */
-  margin-bottom: 15px;   /* optional spacing below */
+  align-items: center;
+  gap: 1px;
 }
+
 
 .s-co {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
-  align-items: center;   /* center the icon itself */
+  align-items: center;
   justify-content: center;
-  font-size: 22px;       /* tweak size to match heading */
   color: #066287;
-  line-height: 1;        /* prevent extra vertical offset */
+  font-size: 20px;
 }
 
+
 .s-section-title {
-  line-height: 1; 
   font-size: 18px;
   font-weight: 600;
   color: #333333;
-   margin: 0;
+  margin: 0;
 }
+
+/* Submit Documents Button */
+.s-submit-docs-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #066287;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.s-submit-docs-btn:hover {
+  background: #1A3D5C;
+
+  box-shadow: 0 4px 12px rgba(6, 98, 135, 0.3);
+}
+
+.s-submit-docs-btn:active {
+  transform: translateY(0);
+}
+
+.s-submit-docs-btn svg {
+  font-size: 18px;
+}
+
 
 .s-activity-list {
   background: #ffffff;
@@ -1086,16 +1133,94 @@
   border-bottom: none;
 }
 
+/* File Upload Styles */
 .s-activity-icon {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  background: rgba(6, 98, 135, 0.1);
-  color: #066287;
+  border-radius: 25%;
+  background: #fafafa;
+  border: 2px dashed #e0e0e0;
+  color: #333;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.s-activity-icon:hover {
+  border-color: #066287;
+  background: #f0f5ff;
+  transform: scale(1.05);
+}
+
+.s-activity-icon:active {
+  transform: scale(0.95);
+}
+
+/* Uploading state */
+.s-activity-icon.uploading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Upload spinner */
+.s-upload-spinner {
+  font-size: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Uploaded file info */
+.s-uploaded-file-info {
+  margin-top: 4px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.s-file-name {
+  color: #28a745;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: #f0f9f0;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.s-file-name:hover {
+  background: #e0f0e0;
+  cursor: pointer;
+}
+
+/* Success state */
+.s-activity-icon.upload-success {
+  border-color: #28a745;
+  background: #f0f9f0;
+}
+
+.s-activity-icon.upload-success:hover {
+  background: #e0f0e0;
+}
+
+/* Error state */
+.s-activity-icon.upload-error {
+  border-color: #dc3545;
+  background: #fff8f8;
+}
+
+.s-activity-icon.upload-error:hover {
+  background: #ffe0e0;
 }
 
 .s-activity-details {
@@ -1123,7 +1248,7 @@
 
 .s-status-completed {
   background: #d4edda;
-  color: #155724;
+  color: #28a745;
 }
 
 .s-status-pending {
@@ -1360,7 +1485,7 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
+  z-index: 98;
   display: none;
 }
 
@@ -1397,87 +1522,390 @@
   }
 }
 
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1024px) {
-  .s-profile-grid {
+
+/* ===== HOME PAGE SPECIFIC RESPONSIVE STYLES ===== */
+@media (max-width: 768px) {
+  /* Home page specific fixes */
+  .s-home .s-dashboard-grid {
     grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .s-home .s-groupc {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .s-home .s-card {
+    padding: 15px;
+  }
+  
+  .s-home .s-card-header {
+    margin-right: 60px;
+  }
+  
+  .s-home .s-box-icon {
+    width: 45px;
+    height: 45px;
+    right: 15px;
+  }
+  
+  .s-home .s-card-value {
+    font-size: 22px;
+  }
+  
+  .s-home .s-credential-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .s-home .s-submit-docs-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .s-home .s-activity-item {
+    padding: 12px 16px;
+  }
+  
+  .s-home .s-activity-icon {
+    width: 35px;
+    height: 35px;
+    margin-right: 12px;
+  }
+  
+  .s-home .s-activity-title {
+    font-size: 14px;
+  }
+  
+  .s-home .s-activity-time {
+    font-size: 11px;
   }
 }
 
-@media (max-width: 768px) {
-  .s-sidebar {
-    transform: translateX(-100%);
-    z-index: 1000;
+/* Small mobile for Home */
+@media (max-width: 480px) {
+  .s-home .s-content {
+    padding: 12px;
   }
   
-  .s-sidebar.s-open {
-    transform: translateX(0);
+  .s-home .s-welcome-banner {
+    padding: 15px;
   }
   
-  .s-main {
+  .s-home .s-welcome-banner h1 {
+    font-size: 20px;
+  }
+  
+  .s-home .s-card-header h3 {
+    font-size: 15px;
+  }
+  
+  .s-home .s-card-value {
+    font-size: 20px;
+  }
+  
+  .s-home .s-card-value1 {
+    margin-top: 15px;
+    font-size: 13px;
+  }
+  
+  .s-home .s-card-label1 {
+    font-size: 14px;
+  }
+}
+
+
+
+
+/* Profile CSS */
+
+/* Mobile Menu Button - Hidden by default on desktop */
+
+.s-mobile-menu-btn {
+  display: flex;
+  top: 15px;
+  left: 15px;
+  background: #1A3D5C;
+  color: #ffffff;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  position: absolute;
+}
+
+
+
+.s-mobile-menu-btn:hover {
+  background: #066287;
+}
+
+/* Profile Content - Desktop styles */
+.s-profile-content {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0;
+  margin-left: 100px; /* Account for sidebar */
+  width: calc(100% - 180px);
+}
+
+/* Profile Header Card */
+.s-profile-header-card {
+  background: linear-gradient(135deg, #1A3D5C, #066287);
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.s-profile-avatar-large {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: white;
+  color: #1A3D5C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 600;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  border: 4px solid rgba(255,255,255,0.3);
+  flex-shrink: 0;
+}
+
+.s-profile-header-info h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+}
+
+.s-profile-badges {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.s-badge {
+  background: rgba(255,255,255,0.2);
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  backdrop-filter: blur(5px);
+}
+
+.s-badge-success {
+  background: #28a745;
+  color: white;
+}
+
+.s-profile-track {
+  font-size: 16px;
+  margin: 5px 0;
+  opacity: 0.9;
+}
+
+.s-profile-grade {
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.8;
+}
+
+/* Profile Sections */
+.s-profile-section {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.s-section-title-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1A3D5C;
+  margin: 0 0 20px 0;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.s-section-title-with-icon svg {
+  color: #066287;
+}
+
+/* Profile Grid - Desktop: 2 columns */
+.s-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.s-profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.s-profile-field.s-full-width {
+  grid-column: span 2;
+}
+
+.s-profile-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.s-profile-field span {
+  font-size: 16px;
+  color: #333;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Tablet Landscape and smaller desktops */
+@media (max-width: 1024px) {
+  .s-profile-content {
     margin-left: 0;
+    width: 100%;
+    padding: 20px;
   }
   
-  .s-menu-toggle {
-    display: block;
+  .s-profile-header-card {
+    padding: 25px;
+    gap: 20px;
   }
   
-  .s-dashboard-grid {
-    grid-template-columns: 1fr;
+  .s-profile-avatar-large {
+    width: 100px;
+    height: 100px;
+    font-size: 40px;
   }
   
-  .s-profile-header {
+  .s-profile-header-info h1 {
+    font-size: 28px;
+  }
+}
+
+/* Tablet Portrait */
+@media (max-width: 768px) {
+  .s-mobile-menu-btn {
+    display: flex;
+  }
+  
+  .s-profile-content {
+    padding: 20px;
+    margin-top: 70px; /* Space for mobile menu button */
+  }
+  
+  .s-profile-header-card {
     flex-direction: column;
     text-align: center;
+    padding: 25px;
   }
   
-  .s-enrollment-steps {
-    flex-direction: column;
-    gap: 16px;
+  .s-profile-header-info h1 {
+    font-size: 24px;
   }
   
-  .s-step:not(:last-child)::after {
-    display: none;
+  .s-profile-badges {
+    justify-content: center;
   }
   
-  .s-info-row {
-    flex-direction: column;
-  }
-  
-  .s-info-label {
-    width: 100%;
-    margin-bottom: 4px;
+  /* Keep 2 columns on tablet if space allows */
+  .s-profile-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 480px) {
-  .s-header {
-    padding: 16px;
+/* Mobile Landscape */
+@media (max-width: 640px) {
+  .s-profile-grid {
+    grid-template-columns: 1fr; /* Switch to 1 column on mobile */
   }
   
-  .s-page-title {
+  .s-profile-field.s-full-width {
+    grid-column: span 1;
+  }
+  
+  .s-profile-section {
+    padding: 20px;
+  }
+  
+  .s-section-title-with-icon {
     font-size: 18px;
   }
-  
-  .s-user-details {
-    display: none;
+}
+
+/* Mobile Portrait */
+@media (max-width: 480px) {
+  .s-profile-content {
+    padding: 15px;
+    margin-top: 60px;
   }
   
-  .s-content {
-    padding: 16px;
-  }
-  
-  .s-welcome-banner {
-    padding: 24px;
-  }
-  
-  .s-welcome-banner h1 {
-    font-size: 20px;
+  .s-profile-header-card {
+    padding: 20px;
   }
   
   .s-profile-avatar-large {
     width: 80px;
     height: 80px;
     font-size: 32px;
+  }
+  
+  .s-profile-header-info h1 {
+    font-size: 20px;
+  }
+  
+  .s-profile-track {
+    font-size: 14px;
+  }
+  
+  .s-profile-grade {
+    font-size: 12px;
+  }
+  
+  .s-section-title-with-icon {
+    font-size: 16px;
+  }
+  
+  .s-profile-field label {
+    font-size: 11px;
+  }
+  
+  .s-profile-field span {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 769px) {
+  .s-mobile-menu-btn {
+    display: none !important; /* Force hide on desktop */
+  }
+}
+
+@media (max-width: 768px) {
+  .s-mobile-menu-btn {
+    display: flex !important; /* Force show on mobile */
   }
 }
