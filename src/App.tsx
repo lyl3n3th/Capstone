@@ -9,6 +9,7 @@ import LoginReg from "./Pages/stdnt/LoginReg.tsx";
 import Reglog from "./Pages/stdnt/Reglog.tsx";
 import SHome from "./Pages/stdnt/SHome.tsx";
 import SProfile from "./Pages/stdnt/SProfile.tsx";
+import SGrades from "./Pages/stdnt/SGrades.tsx";
 
 function App() {
   return (
@@ -27,10 +28,7 @@ function App() {
           {/* Student Routes */}
           <Route path="/student/home" element={<SHome />} />
           <Route path="/student/profile" element={<SProfile />} />
-          <Route
-            path="/student/grades"
-            element={<div>Grades Page (Coming Soon)</div>}
-          />
+          <Route path="/student/grades" element={<SGrades />} />
           <Route
             path="/student/subjects"
             element={<div>Subjects Page (Coming Soon)</div>}

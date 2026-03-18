@@ -7,12 +7,12 @@ import { MdOutlineNoteAlt } from "react-icons/md";
 import { FaCalendarAlt } from "react-icons/fa";
 import { MdFormatListBulleted } from "react-icons/md";
 import { useState, useEffect, useRef } from "react";
-import { IoMenu } from "react-icons/io5";
 import { IoDocumentText } from "react-icons/io5";
 import { MdOutlineDriveFolderUpload } from "react-icons/md";
 import { FaSpinner } from "react-icons/fa";
 import { MdFileUpload } from "react-icons/md";
-import Sidebar from "../../components/Sidebar"; // Updated import path
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
 
 function SHome() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -26,7 +26,6 @@ function SHome() {
     setSidebarOpen(false);
   };
 
-  // Add this state near your other useState declarations
   const [uploadedFiles, setUploadedFiles] = useState<
     Record<number, { name: string; url?: string }>
   >({});
@@ -76,7 +75,6 @@ function SHome() {
   };
 
   const handleSubmitDocuments = () => {
-    // Check if any files are uploaded
     const hasUploads = Object.keys(uploadedFiles).length > 0;
 
     if (!hasUploads) {
@@ -84,17 +82,13 @@ function SHome() {
       return;
     }
 
-    // Show confirmation dialog
     if (window.confirm("Are you sure you want to submit these documents?")) {
-      // Here you would typically send all uploaded files to your server
       console.log("Submitting documents:", uploadedFiles);
 
-      // Simulate submission
       alert("Documents submitted successfully!");
     }
   };
 
-  // Close sidebar when clicking outside on mobile
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -128,8 +122,6 @@ function SHome() {
 
   const handleLogout = () => {
     console.log("Logging out...");
-    // Add your logout logic here
-    // window.location.href = "/login";
   };
 
   const studentData = {
@@ -199,7 +191,7 @@ function SHome() {
       <Sidebar
         isOpen={sidebarOpen}
         onClose={handleSidebarClose}
-        activePage="home" // This highlights the Home menu item
+        activePage="home"
         onLogout={handleLogout}
       />
 
@@ -210,27 +202,13 @@ function SHome() {
 
       {/* Main Content */}
       <div className="s-main">
-        <header className="s-header">
-          <div className="s-header-left">
-            <button className="s-menu-toggle" onClick={handleMenuClick}>
-              <IoMenu size={24} />
-            </button>
-            <div className="s-user-profile">
-              <div className="s-user-avatar">HV</div>
-              <div className="s-user-details">
-                <span className="s-user-name">{studentData.name}</span>
-                <div className="s-user-line">
-                  <span className="s-user-id">{studentData.id}</span>
-                  <span className="s-user-prog">{studentData.progrm}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="s-header-right">
-            <div className="s-header-date">{currentDate}</div>
-          </div>
-        </header>
+        {/* Header Component - Now using the new Header component */}
+        <Header
+          title="Dashboard"
+          onMenuClick={handleMenuClick}
+          studentData={studentData}
+          currentDate={currentDate}
+        />
 
         <main className="s-content">
           {/* Welcome Banner with Dashboard title */}

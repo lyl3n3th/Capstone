@@ -1,24 +1,28 @@
 // components/student/Header.tsx
-import { useState } from "react";
 import "../Stud.css";
+import { IoMenu } from "react-icons/io5";
 
 interface HeaderProps {
   title: string;
   onMenuClick: () => void;
-  userName?: string;
-  userId?: string;
-  notificationCount?: number;
+  studentData?: {
+    name: string;
+    id: string;
+    progrm: string;
+  };
+  currentDate?: string;
 }
 
 function Header({
   title,
   onMenuClick,
-  userName = "John Doe",
-  userId = "2024-0001",
-  notificationCount = 3,
+  studentData = {
+    name: "Hener C. Verdida",
+    id: "20221131",
+    progrm: "SHS",
+  },
+  currentDate,
 }: HeaderProps) {
-  const [showDropdown, setShowDropdown] = useState(false);
-
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -28,40 +32,25 @@ function Header({
   };
 
   return (
-    <header className="portal-header">
-      <div className="header-left">
-        <button className="menu-toggle" onClick={onMenuClick}>
-          ☰
+    <header className="s-header">
+      <div className="s-header-left">
+        <button className="s-menu-toggle" onClick={onMenuClick}>
+          <IoMenu size={24} />
         </button>
-        <h1 className="page-title">{title}</h1>
+        <div className="s-user-profile">
+          <div className="s-user-avatar">{getInitials(studentData.name)}</div>
+          <div className="s-user-details">
+            <span className="s-user-name">{studentData.name}</span>
+            <div className="s-user-line">
+              <span className="s-user-id">{studentData.id}</span>
+              <span className="s-user-prog">{studentData.progrm}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="header-right">
-        <div className="notification-icon">
-          <span>🔔</span>
-          {notificationCount > 0 && (
-            <span className="notification-badge">{notificationCount}</span>
-          )}
-        </div>
-
-        <div
-          className="user-profile"
-          onClick={() => setShowDropdown(!showDropdown)}
-        >
-          <div className="user-avatar">{getInitials(userName)}</div>
-          <div className="user-details">
-            <span className="user-name">{userName}</span>
-            <span className="user-id">ID: {userId}</span>
-          </div>
-        </div>
-
-        {showDropdown && (
-          <div className="user-dropdown">
-            <a href="/student/profile">Profile</a>
-            <a href="/student/settings">Settings</a>
-            <a href="/logout">Logout</a>
-          </div>
-        )}
+      <div className="s-header-right">
+        <div className="s-header-date">{currentDate}</div>
       </div>
     </header>
   );
