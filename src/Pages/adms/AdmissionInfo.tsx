@@ -20,76 +20,56 @@ function AdmissionInfo() {
   const [program1, setProgram1] = useState("Strand/Course");
   const wrapperRef1 = useRef<HTMLDivElement>(null);
 
-  // Religion Drop down
-  const [menuOpenRel, setIsMenuOpenRel] = useState(false);
-  const [religion, setReligion] = useState("Religion");
-  const wrapperRefRel = useRef<HTMLDivElement>(null);
-
   // Civil Drop down
   const [menuOpenCS, setIsMenuOpenCS] = useState(false);
   const [civilStatus, setCivilStatus] = useState("Civil Status");
   const wrapperRefCS = useRef<HTMLDivElement>(null);
 
-  //Nationality drop down
-  const [menuOpenNat, setIsMenuOpenNat] = useState(false);
-  const [nationality, setNationality] = useState("Nationality");
-  const wrapperRefNat = useRef<HTMLDivElement>(null);
-
-  //Sex drop down
+  // Sex drop down
   const [menuOpenSex, setIsMenuOpenSex] = useState(false);
   const [sex, setSex] = useState("Sex");
   const wrapperRefSex = useRef<HTMLDivElement>(null);
 
-  //submit handle
+  // Honor dropdown
+  const [menuOpenHonor, setIsMenuOpenHonor] = useState(false);
+  const [honor, setHonor] = useState("Select Honor");
+  const wrapperRefHonor = useRef<HTMLDivElement>(null);
+
+  // Scholarship Exam Option
+  const [applyScholarship, setApplyScholarship] = useState(false);
+
+  // submit handle
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  //info states
+  // info states (KEPT)
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
   const [mname, setMname] = useState("");
-  const [suffix, setSuffix] = useState("");
-  const [birthday, setBirthday] = useState("");
-  const [pofb, setPofb] = useState("");
   const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
   const [lastSchool, setLastSchool] = useState("");
   const [yearCompletion, setYearCompletion] = useState("");
-  const [lrn, setLrn] = useState("");
+
   const [trackingNumber, setTrackingNumber] = useState("");
 
-  //draft
+  // draft
   const [isLoadingDraft, setIsLoadingDraft] = useState(true);
 
-  //branch admission data
+  // branch admission data
   const selectedBranch = getQueryParam("branch") || "";
   const studentStatus = getQueryParam("status") || "";
   const fromRequirements = getQueryParam("from") === "requirements";
 
   const sexOptions = ["Male", "Female"];
-  const religionOptions = ["Roman Catholic", "Christian", "Muslim", "Others"];
   const civilStatusOptions = ["Single", "Married", "Widowed", "Separated"];
-  const nationalityOptions = [
-    "American",
-    "Australian",
-    "Brazilian",
-    "British",
-    "Canadian",
-    "Chinese",
-    "Filipino",
-    "French",
-    "German",
-    "Indian",
-    "Indonesian",
-    "Italian",
-    "Japanese",
-    "Korean",
-    "Malaysian",
-    "Mexican",
-    "Singaporean",
-    "Spanish",
-    "Thai",
-    "Vietnamese",
+
+  // Honor options
+  const honorOptions = [
+    "No Honor",
+    "With Honor (50%)",
+    "High Honor (60%)",
+    "Highest Honor (80%)",
   ];
 
   let availablePrograms: string[] = [];
@@ -131,20 +111,16 @@ function AdmissionInfo() {
   const isFormValid = (): boolean => {
     if (program === "Program" || program1 === "Strand/Course") return false;
     if (sex === "Sex") return false;
-    if (religion === "Religion") return false;
     if (civilStatus === "Civil Status") return false;
-    if (nationality === "Nationality") return false;
 
     const requiredFields = [
       "fname",
       "lname",
-      "birthday",
       "address",
       "email",
       "contact",
       "lastSchool",
       "yearCompletion",
-      "lrn",
     ];
 
     return requiredFields.every((id) => {
@@ -166,23 +142,21 @@ function AdmissionInfo() {
       fname,
       lname,
       middle_name: mname,
-      suffix,
-      birthday,
-      place_of_birth: pofb,
       address,
       email,
       contact,
       last_school_attended: lastSchool,
       year_completion: yearCompletion,
-      lrn,
 
       // Dropdown selections
       program,
       strand_or_course: program1,
       sex,
-      religion,
       civil_status: civilStatus,
-      nationality,
+
+      // New fields
+      honor,
+      apply_scholarship: applyScholarship,
     };
 
     sessionStorage.setItem("enrollmentDraft", JSON.stringify(draftData));
@@ -199,7 +173,6 @@ function AdmissionInfo() {
     try {
       const draft = JSON.parse(saved);
 
-      // Check if draft is for the same branch and status
       if (draft.branch !== selectedBranch || draft.status !== studentStatus) {
         sessionStorage.removeItem("enrollmentDraft");
         setIsLoadingDraft(false);
@@ -208,35 +181,29 @@ function AdmissionInfo() {
 
       console.log("Loading draft:", draft);
 
-      // Set all text input states
       if (draft.fname) setFname(draft.fname);
       if (draft.lname) setLname(draft.lname);
       if (draft.middle_name) setMname(draft.middle_name);
-      if (draft.suffix) setSuffix(draft.suffix);
-      if (draft.birthday) setBirthday(draft.birthday);
-      if (draft.place_of_birth) setPofb(draft.place_of_birth);
       if (draft.address) setAddress(draft.address);
       if (draft.email) setEmail(draft.email);
       if (draft.contact) setContact(draft.contact);
       if (draft.last_school_attended) setLastSchool(draft.last_school_attended);
       if (draft.year_completion) setYearCompletion(draft.year_completion);
-      if (draft.lrn) setLrn(draft.lrn);
 
       if (draft.sex) setSex(draft.sex);
-      if (draft.religion) setReligion(draft.religion);
       if (draft.civil_status) setCivilStatus(draft.civil_status);
-      if (draft.nationality) setNationality(draft.nationality);
       if (draft.trackingNumber) setTrackingNumber(draft.trackingNumber);
+
+      if (draft.honor) setHonor(draft.honor);
+      if (draft.apply_scholarship !== undefined)
+        setApplyScholarship(draft.apply_scholarship);
 
       if (draft.program) {
         console.log("Setting program to:", draft.program);
         setProgram(draft.program);
 
         if (draft.strand_or_course) {
-          console.log("Will set strand to:", draft.strand_or_course);
-
           setTimeout(() => {
-            console.log("Now setting strand to:", draft.strand_or_course);
             setProgram1(draft.strand_or_course);
           }, 100);
         }
@@ -267,21 +234,17 @@ function AdmissionInfo() {
     fname,
     lname,
     mname,
-    suffix,
-    birthday,
-    pofb,
     address,
     email,
     contact,
     lastSchool,
     yearCompletion,
-    lrn,
     program,
     program1,
     sex,
-    religion,
     civilStatus,
-    nationality,
+    honor,
+    applyScholarship,
     trackingNumber,
   ]);
 
@@ -303,15 +266,6 @@ function AdmissionInfo() {
       case "mname":
         setMname(value);
         break;
-      case "suffix":
-        setSuffix(value);
-        break;
-      case "birthday":
-        setBirthday(value);
-        break;
-      case "pofb":
-        setPofb(value);
-        break;
       case "address":
         setAddress(value);
         break;
@@ -326,9 +280,6 @@ function AdmissionInfo() {
         break;
       case "yearCompletion":
         setYearCompletion(value);
-        break;
-      case "lrn":
-        setLrn(value);
         break;
     }
   };
@@ -346,23 +297,19 @@ function AdmissionInfo() {
       first_name: fname,
       last_name: lname,
       middle_name: mname,
-      suffix: suffix,
-      birthday: birthday,
-      place_of_birth: pofb,
       sex,
-      religion,
       civil_status: civilStatus,
-      nationality,
       address: address,
       email: email,
       contact: contact,
       last_school_attended: lastSchool,
       year_completion: yearCompletion,
-      lrn: lrn,
       program,
       strand_or_course: program1,
       branch: selectedBranch,
       student_status: studentStatus,
+      honor,
+      apply_scholarship: applyScholarship,
     };
 
     try {
@@ -394,25 +341,20 @@ function AdmissionInfo() {
           trackingNumber: data.tracking_number,
           step: 2.5,
           timestamp: new Date().toISOString(),
-
           fname,
           lname,
           mname,
-          suffix,
-          birthday,
-          pofb,
           address,
           email,
           contact,
           lastSchool,
           yearCompletion,
-          lrn,
           program,
           strand_or_course: program1,
           sex,
-          religion,
           civil_status: civilStatus,
-          nationality,
+          honor,
+          apply_scholarship: applyScholarship,
           branch: selectedBranch,
           status: studentStatus,
         };
@@ -430,7 +372,6 @@ function AdmissionInfo() {
   };
 
   const handleCancel = () => {
-    // Save
     saveDraft();
 
     const draft = sessionStorage.getItem("enrollmentDraft");
@@ -501,36 +442,10 @@ function AdmissionInfo() {
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
-        wrapperRefRel.current &&
-        !wrapperRefRel.current.contains(event.target as Node)
-      ) {
-        setIsMenuOpenRel(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
         wrapperRefCS.current &&
         !wrapperRefCS.current.contains(event.target as Node)
       ) {
         setIsMenuOpenCS(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        wrapperRefNat.current &&
-        !wrapperRefNat.current.contains(event.target as Node)
-      ) {
-        setIsMenuOpenNat(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -550,9 +465,24 @@ function AdmissionInfo() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        wrapperRefHonor.current &&
+        !wrapperRefHonor.current.contains(event.target as Node)
+      ) {
+        setIsMenuOpenHonor(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   if (isLoadingDraft) {
     return <div className="container">Loading saved data...</div>;
   }
+
+  const isCollege = program === "College";
 
   return (
     <div className="container">
@@ -571,7 +501,10 @@ function AdmissionInfo() {
               </strong>
               <br />
             </p>
-            <p>Please fill in all the required fields. </p>
+            <p>
+              Please fill in all the required fields.{" "}
+              <span style={{ color: "red" }}>*</span> indicates required field
+            </p>
           </div>
 
           <form action="" className="pinfo">
@@ -614,46 +547,9 @@ function AdmissionInfo() {
                   onChange={handleInputChange}
                 />
               </div>
-
-              <div className="form-group">
-                <label htmlFor="suffix">Suffix</label>
-                <input
-                  type="text"
-                  id="suffix"
-                  name="suffix"
-                  value={suffix}
-                  onChange={handleInputChange}
-                />
-              </div>
             </div>
 
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="birthday">
-                  Birthday <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="date"
-                  id="birthday"
-                  name="birthday"
-                  required
-                  value={birthday}
-                  onChange={handleInputChange}
-                  max={new Date().toISOString().split("T")[0]}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="pofb">Place of Birth</label>
-                <input
-                  type="text"
-                  id="pofb"
-                  name="pofb"
-                  value={pofb}
-                  onChange={handleInputChange}
-                />
-              </div>
-
               <div className="dropdown" ref={wrapperRefSex}>
                 <label>
                   Sex <span style={{ color: "red" }}>*</span>
@@ -674,36 +570,6 @@ function AdmissionInfo() {
                       onClick={() => {
                         setSex(opt);
                         setIsMenuOpenSex(false);
-                      }}
-                    >
-                      {opt}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="dropdown" ref={wrapperRefRel}>
-                <label>
-                  Religion <span style={{ color: "red" }}>*</span>
-                </label>
-                <div
-                  className="select"
-                  onClick={() => setIsMenuOpenRel((p) => !p)}
-                >
-                  <span className="selected">{religion}</span>
-                  <div
-                    className={`cart ${menuOpenRel ? "cart-rotate" : ""}`}
-                  ></div>
-                </div>
-                <ul className={`menu ${menuOpenRel ? "show" : ""}`}>
-                  {religionOptions.map((opt) => (
-                    <li
-                      key={opt}
-                      onClick={() => {
-                        setReligion(opt);
-                        setIsMenuOpenRel(false);
                       }}
                     >
                       {opt}
@@ -732,34 +598,6 @@ function AdmissionInfo() {
                       onClick={() => {
                         setCivilStatus(opt);
                         setIsMenuOpenCS(false);
-                      }}
-                    >
-                      {opt}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="dropdown" ref={wrapperRefNat}>
-                <label>
-                  Nationality <span style={{ color: "red" }}>*</span>
-                </label>
-                <div
-                  className="select"
-                  onClick={() => setIsMenuOpenNat((p) => !p)}
-                >
-                  <span className="selected">{nationality}</span>
-                  <div
-                    className={`cart ${menuOpenNat ? "cart-rotate" : ""}`}
-                  ></div>
-                </div>
-                <ul className={`menu ${menuOpenNat ? "show" : ""}`}>
-                  {nationalityOptions.map((opt) => (
-                    <li
-                      key={opt}
-                      onClick={() => {
-                        setNationality(opt);
-                        setIsMenuOpenNat(false);
                       }}
                     >
                       {opt}
@@ -848,22 +686,72 @@ function AdmissionInfo() {
                   onChange={handleInputChange}
                 />
               </div>
+            </div>
 
-              <div className="form-group">
-                <label htmlFor="lrn">
-                  LRN <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  id="lrn"
-                  name="lrn"
-                  placeholder="12-digit number"
-                  required
-                  value={lrn}
-                  onChange={handleInputChange}
-                  maxLength={12}
-                />
+            {/* Combined Row: Honor Selection + Scholarship Exam (College only) */}
+            <div className="form-row honor-scholarship-row">
+              {/* Honor Selection Dropdown */}
+              <div className="form-group honor-group">
+                <label>Academic Honor (if applicable)</label>
+                <div className="dropdown" ref={wrapperRefHonor}>
+                  <div
+                    className="select"
+                    onClick={() => setIsMenuOpenHonor((p) => !p)}
+                  >
+                    <span className="selected">{honor}</span>
+                    <div
+                      className={`cart ${menuOpenHonor ? "cart-rotate" : ""}`}
+                    ></div>
+                  </div>
+                  <ul className={`menu ${menuOpenHonor ? "show" : ""}`}>
+                    {honorOptions.map((opt) => (
+                      <li
+                        key={opt}
+                        onClick={() => {
+                          setHonor(opt);
+                          setIsMenuOpenHonor(false);
+                          saveDraft();
+                        }}
+                      >
+                        {opt}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
+
+              {/* Scholarship Exam Option (College only) */}
+              {isCollege && (
+                <div className="form-group scholarship-group">
+                  <label>Scholarship Exam</label>
+                  <div className="scholarship-options">
+                    <label className="radio-label">
+                      <input
+                        type="radio"
+                        name="scholarship"
+                        checked={applyScholarship === true}
+                        onChange={() => setApplyScholarship(true)}
+                      />
+                      <span>Apply for Scholarship</span>
+                    </label>
+                    <label className="radio-label">
+                      <input
+                        type="radio"
+                        name="scholarship"
+                        checked={applyScholarship === false}
+                        onChange={() => setApplyScholarship(false)}
+                      />
+                      <span>Regular Enrollment</span>
+                    </label>
+                  </div>
+                  {applyScholarship && (
+                    <small className="scholarship-note">
+                      You will be scheduled for an on-site scholarship exam
+                      after approval.
+                    </small>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="form-row dropdown-row">

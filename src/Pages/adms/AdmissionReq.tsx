@@ -3,6 +3,7 @@ import { FaCircleExclamation } from "react-icons/fa6";
 import "../../App.css";
 import Progress from "../../components/Progress";
 import React, { useState, useEffect } from "react";
+import { MdOutlineAttachFile } from "react-icons/md";
 
 function getQueryParam(name: string): string | null {
   const params = new URLSearchParams(window.location.search);
@@ -21,13 +22,16 @@ function AdmissionReq() {
   const selectedBranch = getQueryParam("branch") || "";
   const studentStatus = getQueryParam("status") || "";
   const trackingNumber = getQueryParam("trackingNumber") || "";
-  // Add program from URL params
   const program = getQueryParam("program") || "";
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, string>>(
     {},
   );
+
+  // State for honor selection from draft
+  const [studentHonor, setStudentHonor] = useState<string>("No Honor");
+  const [studentName, setStudentName] = useState<string>("");
 
   // Load and verify draft data on component mount
   useEffect(() => {
@@ -41,15 +45,21 @@ function AdmissionReq() {
           program: parsedDraft.program,
           strand: parsedDraft.strand_or_course,
           trackingNumber: parsedDraft.trackingNumber,
+          honor: parsedDraft.honor,
         });
+
+        if (parsedDraft.honor) setStudentHonor(parsedDraft.honor);
+        if (parsedDraft.fname && parsedDraft.lname) {
+          setStudentName(`${parsedDraft.fname} ${parsedDraft.lname}`);
+        }
       } catch (err) {
         console.warn("Failed to parse draft", err);
       }
     }
   }, []);
 
-  // Requirements
-  const requirements: Record<string, string[]> = {
+  // Base requirements for all students
+  const baseRequirements: Record<string, string[]> = {
     "Junior High Completer": [
       "Form 137",
       "Grade Report Card",
@@ -82,8 +92,30 @@ function AdmissionReq() {
     ],
   };
 
-  const currentRequirements = requirements[studentStatus] || [];
-  const groupedRequirements = chunkArray(currentRequirements, 2);
+  // Check if student has honor (not "No Honor")
+  const hasHonor = studentHonor !== "No Honor";
+
+  // Get base requirements
+  let currentRequirements = [...(baseRequirements[studentStatus] || [])];
+
+  // Add Honor Certificate requirement if student has honor
+  if (hasHonor) {
+    currentRequirements.push("Honor Certificate");
+  }
+
+  // Function to arrange items in rows (2 per row, last row centered)
+  const getArrangedRows = () => {
+    const rows = [];
+    const items = [...currentRequirements];
+
+    for (let i = 0; i < items.length; i += 2) {
+      const row = items.slice(i, i + 2);
+      rows.push(row);
+    }
+    return rows;
+  };
+
+  const arrangedRows = getArrangedRows();
 
   // Handle file selection
   const handleFileChange = (
@@ -101,7 +133,6 @@ function AdmissionReq() {
 
   // Function to continue without uploading
   const handleContinueWithoutUpload = () => {
-    // Update draft to mark step 3 as completed without uploads
     const existing = sessionStorage.getItem("enrollmentDraft");
     if (existing) {
       const draft = JSON.parse(existing);
@@ -114,15 +145,13 @@ function AdmissionReq() {
       sessionStorage.setItem("enrollmentDraft", JSON.stringify(updated));
     }
 
-    // Navigate to confirmation page WITH program parameter
     window.location.href = `/confirmation?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}&program=${encodeURIComponent(program)}`;
   };
 
-  // Submit handler (for when files are actually uploaded)
+  // Submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Check if any files are selected
     const hasFiles = currentRequirements.some((req) => {
       const input = document.getElementById(
         req.replace(/\s+/g, "").toLowerCase(),
@@ -130,19 +159,16 @@ function AdmissionReq() {
       return input?.files?.[0] != null;
     });
 
-    // If no files, just continue without uploading
     if (!hasFiles) {
       handleContinueWithoutUpload();
       return;
     }
 
-    // Otherwise, proceed with upload
     setIsSubmitting(true);
 
     const formData = new FormData();
     formData.append("trackingNumber", trackingNumber);
 
-    // Append files that were selected
     currentRequirements.forEach((req) => {
       const input = document.getElementById(
         req.replace(/\s+/g, "").toLowerCase(),
@@ -160,7 +186,6 @@ function AdmissionReq() {
 
       if (!response.ok) {
         alert("Upload failed. You can continue without uploading for now.");
-        // Still allow continuing even if upload fails
         handleContinueWithoutUpload();
         return;
       }
@@ -168,7 +193,6 @@ function AdmissionReq() {
       const data = await response.json();
       console.log("Uploaded:", data);
 
-      // Update draft to mark step 3 as completed
       const existing = sessionStorage.getItem("enrollmentDraft");
       if (existing) {
         const draft = JSON.parse(existing);
@@ -181,7 +205,6 @@ function AdmissionReq() {
         sessionStorage.setItem("enrollmentDraft", JSON.stringify(updated));
       }
 
-      // Navigate to confirmation page WITH program parameter
       window.location.href = `/confirmation?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber}&program=${encodeURIComponent(program)}`;
     } catch (err) {
       console.error(err);
@@ -191,7 +214,6 @@ function AdmissionReq() {
   };
 
   const handleCancel = () => {
-    // Get existing draft - this contains all the data from step 2
     const existing = sessionStorage.getItem("enrollmentDraft");
     let draft = existing ? JSON.parse(existing) : {};
 
@@ -200,12 +222,12 @@ function AdmissionReq() {
       lname: draft.lname,
       program: draft.program,
       strand: draft.strand_or_course,
+      honor: draft.honor,
     });
 
-    // Make sure we preserve ALL data when navigating back
     const updatedDraft = {
-      ...draft, // This preserves everything from step 2
-      step: 2, // Go back to step 2
+      ...draft,
+      step: 2,
       lastVisited: new Date().toISOString(),
       branch: selectedBranch,
       status: studentStatus,
@@ -214,14 +236,13 @@ function AdmissionReq() {
 
     sessionStorage.setItem("enrollmentDraft", JSON.stringify(updatedDraft));
 
-    // Navigate back to information page WITH program parameter
     window.location.href = `/information?branch=${encodeURIComponent(selectedBranch)}&status=${encodeURIComponent(studentStatus)}&trackingNumber=${trackingNumber || draft.trackingNumber}&program=${encodeURIComponent(program)}&from=requirements`;
   };
 
   // If no requirements for this status
   if (currentRequirements.length === 0) {
     return (
-      <div className="container">
+      <div className="container admission-req-container">
         <div className="container1">
           <Progress current={3} />
         </div>
@@ -246,7 +267,7 @@ function AdmissionReq() {
   }
 
   return (
-    <div className="container">
+    <div className="container admission-req-container">
       <div className="container1">
         <Progress current={3} />
       </div>
@@ -254,29 +275,77 @@ function AdmissionReq() {
       <div className="mcontainer mcnt">
         <div className="header2">
           <div className="syb">
-            Upload Requirements
+            <h2>Upload Requirements</h2>
             <p>Upload the necessary documents to complete your application.</p>
-            {/* Optional: Show program info */}
+            {/* Show honor info if applicable */}
+            {hasHonor && (
+              <div className="honor-notice">
+                <p>
+                  <strong>Honor Certificate Required</strong>
+                </p>
+                <p>
+                  You indicated: <strong>{studentHonor}</strong>. Please upload
+                  your Honor Certificate as proof.
+                </p>
+              </div>
+            )}
           </div>
 
           <form className="Upload-form" onSubmit={handleSubmit}>
-            {groupedRequirements.map((row, rowIndex) => (
-              <div className="upload-row" key={rowIndex}>
+            {/* Dynamic rows with 2 items per row, centered layout */}
+            {arrangedRows.map((row, rowIndex) => (
+              <div
+                key={rowIndex}
+                className="upload-row"
+                style={{
+                  display: "flex",
+                  justifyContent: row.length === 1 ? "center" : "flex-start",
+                  gap: "30px",
+                  marginBottom: "30px",
+                  flexWrap: "wrap",
+                }}
+              >
                 {row.map((req, index) => {
                   const inputId = req.replace(/\s+/g, "").toLowerCase();
+                  const isHonorCert = req === "Honor Certificate";
+                  const hasFile = uploadedFiles[req];
                   return (
-                    <div className="upload-group" key={index}>
+                    <div
+                      key={index}
+                      className="upload-group"
+                      style={{
+                        flex: row.length === 1 ? "0 1 auto" : "1",
+                        minWidth: "280px",
+                        maxWidth: row.length === 1 ? "350px" : "100%",
+                      }}
+                    >
                       <label htmlFor={inputId}>
                         {req}{" "}
-                        <span
-                          style={{ color: "#666", fontSize: "12px" }}
-                        ></span>
+                        {isHonorCert && hasHonor && (
+                          <span style={{ color: "red", fontSize: "12px" }}>
+                            *
+                          </span>
+                        )}
+                        <span style={{ color: "#666", fontSize: "12px" }}>
+                          {!isHonorCert && " (optional)"}
+                        </span>
                       </label>
                       <label className="file-wrapper">
                         <span className="upload-text">
-                          {uploadedFiles[req]
-                            ? `📎 ${uploadedFiles[req]}`
-                            : `Click to upload ${req} (optional)`}
+                          {hasFile ? (
+                            <span
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "2px",
+                              }}
+                            >
+                              <MdOutlineAttachFile /> {uploadedFiles[req]}
+                            </span>
+                          ) : (
+                            `Click to upload ${req}${isHonorCert && hasHonor ? " (required)" : " (optional)"}`
+                          )}
                         </span>
                         <div className="cont-icon">
                           <MdOutlineDriveFolderUpload className="icon" />
@@ -288,6 +357,7 @@ function AdmissionReq() {
                           name={inputId}
                           accept=".pdf,.jpg,.jpeg,.png"
                           onChange={(e) => handleFileChange(req, e)}
+                          required={isHonorCert && hasHonor}
                         />
                       </label>
                     </div>
@@ -312,6 +382,15 @@ function AdmissionReq() {
               <p className="notice-text">
                 You will need to bring physical copies on your schedule visit
               </p>
+              {hasHonor && (
+                <p
+                  className="notice-text"
+                  style={{ color: "#132aff", fontWeight: "500" }}
+                >
+                  Honor Certificate is required to verify your academic honors
+                  and qualify for tuition discounts.
+                </p>
+              )}
             </div>
 
             <div

@@ -13,10 +13,12 @@ import { FaSpinner } from "react-icons/fa";
 import { MdFileUpload } from "react-icons/md";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import { useStudent } from "../../context/StudentContext";
 
 function SHome() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const { student, isLoading } = useStudent();
 
   const handleMenuClick = () => {
     setSidebarOpen(!sidebarOpen);
@@ -32,7 +34,6 @@ function SHome() {
   const [uploadingId, setUploadingId] = useState<number | null>(null);
 
   const handleFileUpload = async (activityId: number) => {
-    // Create a hidden file input
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".pdf,.jpg,.jpeg,.png,.doc,.docx";
@@ -41,19 +42,16 @@ function SHome() {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
 
-      // Show uploading state
       setUploadingId(activityId);
 
-      // Create FormData
       const formData = new FormData();
       formData.append("file", file);
       formData.append("activityId", activityId.toString());
-      formData.append("studentId", studentData.id);
+      formData.append("studentId", student?.id || "");
 
       try {
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        // Save uploaded file info
         setUploadedFiles((prev) => ({
           ...prev,
           [activityId]: {
@@ -84,7 +82,6 @@ function SHome() {
 
     if (window.confirm("Are you sure you want to submit these documents?")) {
       console.log("Submitting documents:", uploadedFiles);
-
       alert("Documents submitted successfully!");
     }
   };
@@ -106,7 +103,6 @@ function SHome() {
     };
   }, [sidebarOpen]);
 
-  // Close sidebar when window resizes to desktop size
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768 && sidebarOpen) {
@@ -124,24 +120,20 @@ function SHome() {
     console.log("Logging out...");
   };
 
-  const studentData = {
-    name: "Hener C. Verdida",
-    id: "20221131",
-    progrm: "SHS",
-    gpa: "1.75",
-    enrolledSubjects: 8,
-    enrollmentStatus: "Pending",
-    strand: "TVL - ICT",
-    email: "ayawkona@gmail.com",
-  };
-
-  // Get current date for display in header right
+  // Get current date
   const currentDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
     weekday: "long",
   });
+
+  // Prepare student data for header
+  const studentData = {
+    name: student ? `${student.firstName} ${student.lastName}` : "Loading...",
+    id: student?.studentNumber || "",
+    progrm: student?.programType || "",
+  };
 
   const recentActivities = [
     {
@@ -185,9 +177,16 @@ function SHome() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="s-portal">
+        <div style={{ minHeight: "100vh" }}></div>
+      </div>
+    );
+  }
+
   return (
     <div className="s-portal s-home">
-      {/* Sidebar Component */}
       <Sidebar
         isOpen={sidebarOpen}
         onClose={handleSidebarClose}
@@ -195,14 +194,11 @@ function SHome() {
         onLogout={handleLogout}
       />
 
-      {/* Overlay for mobile when sidebar is open */}
       {sidebarOpen && (
         <div className="s-overlay" onClick={handleSidebarClose}></div>
       )}
 
-      {/* Main Content */}
       <div className="s-main">
-        {/* Header Component - Now using the new Header component */}
         <Header
           title="Dashboard"
           onMenuClick={handleMenuClick}
@@ -211,7 +207,6 @@ function SHome() {
         />
 
         <main className="s-content">
-          {/* Welcome Banner with Dashboard title */}
           <div className="s-welcome-banner">
             <h1>Dashboard</h1>
           </div>
@@ -251,13 +246,21 @@ function SHome() {
 
             <div className="s-card">
               <div className="s-card-header1">
-                <h3>{studentData.name}</h3>
-                <span className="s-str-p">{studentData.strand}</span>
+                <h3>
+                  {student
+                    ? `${student.firstName} ${student.lastName}`
+                    : "Student"}
+                </h3>
+                <span className="s-str-p">{"TVL - ICT"}</span>
               </div>
               <div className="s-card-value1">Student Number:</div>
-              <div className="s-card-label1">{studentData.id}</div>
+              <div className="s-card-label1">
+                {student?.studentNumber || "20221131"}
+              </div>
               <div className="s-card-value1">Email:</div>
-              <div className="s-card-label1">{studentData.email}</div>
+              <div className="s-card-label1">
+                {student?.email || "student@aics.edu.ph"}
+              </div>
               <div className="s-card-value1">Password:</div>
               <div className="s-card-label1">************</div>
             </div>

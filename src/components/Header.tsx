@@ -1,6 +1,7 @@
 // components/student/Header.tsx
 import "../Stud.css";
 import { IoMenu } from "react-icons/io5";
+import { useState, useEffect } from "react";
 
 interface HeaderProps {
   title: string;
@@ -23,6 +24,17 @@ function Header({
   },
   currentDate,
 }: HeaderProps) {
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -37,20 +49,32 @@ function Header({
         <button className="s-menu-toggle" onClick={onMenuClick}>
           <IoMenu size={24} />
         </button>
-        <div className="s-user-profile">
-          <div className="s-user-avatar">{getInitials(studentData.name)}</div>
-          <div className="s-user-details">
-            <span className="s-user-name">{studentData.name}</span>
-            <div className="s-user-line">
-              <span className="s-user-id">{studentData.id}</span>
-              <span className="s-user-prog">{studentData.progrm}</span>
+
+        {/* Desktop User Profile (visible on desktop only) */}
+        {!isMobile && (
+          <div className="s-user-profile">
+            <div className="s-user-avatar">{getInitials(studentData.name)}</div>
+            <div className="s-user-details">
+              <span className="s-user-name">{studentData.name}</span>
+              <div className="s-user-line">
+                <span className="s-user-id">{studentData.id}</span>
+                <span className="s-user-prog">{studentData.progrm}</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="s-header-right">
-        <div className="s-header-date">{currentDate}</div>
+        {/* Desktop Date (visible on desktop only) */}
+        {!isMobile && <div className="s-header-date">{currentDate}</div>}
+
+        {/* Mobile User Profile (visible on mobile only) */}
+        {isMobile && (
+          <div className="s-user-profile-mobile">
+            <div className="s-user-avatar">{getInitials(studentData.name)}</div>
+          </div>
+        )}
       </div>
     </header>
   );

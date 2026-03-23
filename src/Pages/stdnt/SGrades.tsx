@@ -7,10 +7,10 @@ import {
   FaCalendarAlt,
   FaGraduationCap,
 } from "react-icons/fa";
-import { BsCardList } from "react-icons/bs";
 import { IoDocumentText } from "react-icons/io5";
 import Sidebar from "../../components/Sidebar";
 import Header from "../../components/Header";
+import { useStudent } from "../../context/StudentContext";
 
 function SGrades() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -19,16 +19,11 @@ function SGrades() {
   const [showFilters, setShowFilters] = useState(false);
   const [filteredGrades, setFilteredGrades] = useState<any[]>([]);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
-  // Mock student data
-  const studentData = {
-    name: "Hener C. Verdida",
-    id: "20221131",
-    progrm: "SHS",
-    strand: "TVL - ICT",
-  };
+  const { student } = useStudent();
 
-  // Mock grades data
   const gradesData = [
     {
       id: 1,
@@ -100,7 +95,6 @@ function SGrades() {
   ];
 
   const academicYears = ["2024-2025", "2025-2026", "2026-2027"];
-
   const semesters = ["1st Semester", "2nd Semester", "Summer"];
 
   const handleMenuClick = () => {
@@ -111,6 +105,7 @@ function SGrades() {
     setSidebarOpen(false);
   };
 
+  // Close sidebar when clicking outside on mobile
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -128,7 +123,7 @@ function SGrades() {
     };
   }, [sidebarOpen]);
 
-  // filter grades based on selected academic year and semester
+  // Filter grades
   useEffect(() => {
     const filtered = gradesData.filter(
       (grade) =>
@@ -153,10 +148,8 @@ function SGrades() {
 
   const handleLogout = () => {
     console.log("Logging out...");
-    // window.location.href = "/login";
   };
 
-  // get current date
   const currentDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -164,20 +157,31 @@ function SGrades() {
     weekday: "long",
   });
 
-  return (
-    <div className="s-portal">
-      <Sidebar
-        isOpen={sidebarOpen}
-        onClose={handleSidebarClose}
-        activePage="grades"
-        onLogout={handleLogout}
-      />
+  const studentData = {
+    name: student?.firstName + " " + student?.lastName || "Hener C. Verdida",
+    id: student?.studentNumber || "20221131",
+    progrm: student?.programType || "SHS",
+  };
 
+  return (
+    <div className="s-portal s-grd">
+      {/* Sidebar */}
+      <div ref={sidebarRef}>
+        <Sidebar
+          isOpen={sidebarOpen}
+          onClose={handleSidebarClose}
+          activePage="grades"
+          onLogout={handleLogout}
+        />
+      </div>
+
+      {/* Overlay for mobile */}
       {sidebarOpen && (
         <div className="s-overlay" onClick={handleSidebarClose}></div>
       )}
 
-      <div className="s-main">
+      {/* Main Content */}
+      <div className="s-main s-mm">
         <Header
           title="Grades"
           onMenuClick={handleMenuClick}
@@ -185,13 +189,15 @@ function SGrades() {
           currentDate={currentDate}
         />
 
-        <main className="s-content">
+        <main className="s-content" ref={contentRef}>
+          {/* Welcome Banner */}
           <div className="s-welcome-banner s-grades-banner">
             <div className="s-grades-banner-content">
               <h1>Grades</h1>
             </div>
           </div>
 
+          {/* Controls Row */}
           <div className="s-grades-controls-row">
             <div className="s-grades-banner-subtitle">
               <span className="s-academic-year">
@@ -215,6 +221,7 @@ function SGrades() {
             </div>
           </div>
 
+          {/* Filter Panel */}
           {showFilters && (
             <div className="s-filter-panel">
               <h3>Filter Grades</h3>
@@ -251,6 +258,7 @@ function SGrades() {
             </div>
           )}
 
+          {/* Notice Card */}
           <div className="s-notice-card">
             <div className="s-notice-icon">
               <IoDocumentText />
@@ -265,40 +273,45 @@ function SGrades() {
             </div>
           </div>
 
-          <div className="s-grades-table-container">
-            <table className="s-grades-table">
-              <thead>
-                <tr>
-                  <th>Subject Code</th>
-                  <th>Subject Title</th>
-                  <th>1st Quarter</th>
-                  <th>2nd Quarter</th>
-                  <th>3rd Quarter</th>
-                  <th>4th Quarter</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredGrades.length > 0 ? (
-                  filteredGrades.map((grade) => (
-                    <tr key={grade.id}>
-                      <td className="s-subject-code">{grade.subjectCode}</td>
-                      <td className="s-subject-title">{grade.subjectTitle}</td>
-                      <td className="s-grade-value">{grade.firstQuarter}</td>
-                      <td className="s-grade-value">{grade.secondQuarter}</td>
-                      <td className="s-grade-value">{grade.thirdQuarter}</td>
-                      <td className="s-grade-value">{grade.fourthQuarter}</td>
-                    </tr>
-                  ))
-                ) : (
+          {/* Grades Table Container - Scrollable on mobile */}
+          <div className="s-grades-table-wrapper" ref={tableContainerRef}>
+            <div className="s-grades-table-container">
+              <table className="s-grades-table">
+                <thead>
                   <tr>
-                    <td colSpan={6} className="s-no-data">
-                      No grades found for the selected academic year and
-                      semester.
-                    </td>
+                    <th>Subject Code</th>
+                    <th>Subject Title</th>
+                    <th>1st Quarter</th>
+                    <th>2nd Quarter</th>
+                    <th>3rd Quarter</th>
+                    <th>4th Quarter</th>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredGrades.length > 0 ? (
+                    filteredGrades.map((grade) => (
+                      <tr key={grade.id}>
+                        <td className="s-subject-code">{grade.subjectCode}</td>
+                        <td className="s-subject-title">
+                          {grade.subjectTitle}
+                        </td>
+                        <td className="s-grade-value">{grade.firstQuarter}</td>
+                        <td className="s-grade-value">{grade.secondQuarter}</td>
+                        <td className="s-grade-value">{grade.thirdQuarter}</td>
+                        <td className="s-grade-value">{grade.fourthQuarter}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={6} className="s-no-data">
+                        No grades found for the selected academic year and
+                        semester.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </main>
       </div>
